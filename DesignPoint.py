@@ -69,12 +69,10 @@ p25t_p2t = pi_LPC_design
 m_25 = m_2*(1-b_25)*np.sqrt(T25t_T2t)/p25t_p2t
 m_HPC_design = m_25
 
-## HPC Outlet - Combustion Chamber Inlet (3t) ---------------------------------------------------------------------------------------------------------------
-
-tolerance = 1e-8
+## HPC Outlet - Combustion Chamber Inlet (3t) ----------------------------------------------------------------------------------------------------------------
 
 def f(N):
-    return abs(compressor(m_HPC_design, N, "m", "N", "pi", "HPC") - pi_HPC_design) - tolerance
+    return abs(compressor(m_HPC_design, N, "m", "N", "pi", "HPC") - pi_HPC_design)
 
 N_HPC_design = newton(f,1)
 
@@ -98,7 +96,7 @@ m_4 =  m_3/(1-b_25-b_3)*(1+f_assumed-b_25-b_3)*np.sqrt(T4t_T3t)/p4t_p3t
 
 p41t_p4t = 1
 T41t_T4t = (m_4 + b_3*m_25/(1-b_25)*np.sqrt(T4t_T3t*T3t_T25t)*1/p3t_p25t*1/p4t_p3t*
-            Cp_c/Cp_e*(1/(T4t_T3t*T3t_T25t)))/(m_4 + b_3*m_25/(1-b_25)*np.sqrt(T4t_T3t*T3t_T25t)*1/p3t_p25t*1/p4t_p3t)
+Cp_c/Cp_e*(1/(T4t_T3t*T3t_T25t)))/(m_4 + b_3*m_25/(1-b_25)*np.sqrt(T4t_T3t*T3t_T25t)*1/p3t_p25t*1/p4t_p3t)
    
 m_41 = m_4/(1+f_assumed-b_25-b_3)*(1+f_assumed-b_25)*np.sqrt(T41t_T4t)/p41t_p4t
 m_HPT_design = m_41
@@ -106,11 +104,10 @@ m_HPT_design = m_41
 # From power equilibrium and speed compatibility:
 
 T41t_T25t = T41t_T4t*T4t_T3t*T3t_T25t
-T45t_T41t = 1/(1 + Cp_c*(1 - b_25)*(T3t_T25t - 1)/(eta_mHP*Cp_e*T41t_T25t*(1 + f_assumed - 0.5*b_3 - b_25)))
+T45t_T41t = 1 - Cp_c*(1 - b_25)*(T3t_T25t - 1)/(eta_mHP*Cp_e*T41t_T25t*(1 + f_assumed - 0.5*b_3 - b_25))
 
 N_HPT_design = 1
 error = np.NaN
-tolerance = 1e-8
 
 while np.isnan(error) or error >= 1e-8:
 
@@ -118,7 +115,7 @@ while np.isnan(error) or error >= 1e-8:
     pi_HPT_design = 1/(1 + 1/eta_HPT*(T45t_T41t - 1))**(gamma_e/(gamma_e - 1))
 
     def f(N):
-        return abs(1+eta_HPT*(1/turbine(m_HPT_design, N, "m", "N", "pi", "HPT")**((gamma_e - 1)/gamma_e) - 1) - T45t_T41t) - tolerance
+        return abs(1+eta_HPT*(1/turbine(m_HPT_design, N, "m", "N", "pi", "HPT")**((gamma_e - 1)/gamma_e) - 1) - T45t_T41t)
 
     error = np.abs(newton(f,N_HPT_design) - N_HPT_design)
     
@@ -135,11 +132,10 @@ m_LPT_design = m_45
 # From power equilibrium and speed compatibility:
 
 T45t_T2t = T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t
-T5t_T45t = 1/(1 + Cp_c*(T25t_T2t-1)/(eta_mLP*Cp_e*T45t_T2t*(1 + f_assumed - b_25)))
+T5t_T45t = 1 - Cp_c*(T25t_T2t-1)/(eta_mLP*Cp_e*T45t_T2t*(1 + f_assumed - b_25))
 
 N_LPT_design = 1
 error = np.NaN
-tolerance = 1e-8
 
 while np.isnan(error) or error >= 1e-8:
 
@@ -147,7 +143,7 @@ while np.isnan(error) or error >= 1e-8:
     pi_LPT_design = 1/(1 + 1/eta_LPT*(T5t_T45t - 1))**(gamma_e/(gamma_e - 1))
 
     def f(N):
-        return abs(1+eta_LPT*(1/turbine(m_LPT_design, N, "m", "N", "pi", "LPT")**((gamma_e - 1)/gamma_e) - 1) - T5t_T45t) - tolerance
+        return abs(1+eta_LPT*(1/turbine(m_LPT_design, N, "m", "N", "pi", "LPT")**((gamma_e - 1)/gamma_e) - 1) - T5t_T45t)
 
     error = np.abs(newton(f,N_LPT_design) - N_LPT_design)
     
@@ -187,6 +183,11 @@ A9_A8 = (1+(1-1/eta_n)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(g
 (1+(gamma_e-1)/2*M9**2))**((gamma_e+1)/(2*(gamma_e-1)))
 
 A9 = A9_A8*A8
+
+print(m_LPC_design, m_HPC_design, m_HPT_design, m_LPT_design, pi_LPC_design, \
+pi_HPC_design, pi_HPT_design, pi_LPT_design, N_ref_LPC, N_ref_HPC, N_ref_HPT, N_ref_LPT, A8, A9, NPR_design, fuel_param_design)
+
+
 
 
 

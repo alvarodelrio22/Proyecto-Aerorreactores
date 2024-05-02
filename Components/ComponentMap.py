@@ -14,8 +14,8 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
     beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
     N_data = [0.45,0.5,0.6,0.7,0.8,0.85,0.90,0.92,0.94,0.955,0.98,1,1.04,1.08]
     
-    Num_refinement = 500
-    precision = 5
+    Num_refinement = 250
+    precision = 3
 
     beta_refined = np.linspace(np.min(beta_data), np.max(beta_data),Num_refinement)
     N_refined = np.linspace(np.min(N_data), np.max(N_data),Num_refinement)
@@ -197,8 +197,8 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
     beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
     N_data = [0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2]
     
-    Num_refinement = 500
-    precision = 5
+    Num_refinement = 250
+    precision = 3
 
     beta_refined = np.linspace(np.min(beta_data), np.max(beta_data),Num_refinement)
     N_refined = np.linspace(np.min(N_data), np.max(N_data),Num_refinement)

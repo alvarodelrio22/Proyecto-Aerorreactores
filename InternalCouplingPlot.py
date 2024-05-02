@@ -21,7 +21,7 @@ for i in range(len(beta_LPC)):
 
         print("Iteration: " + str(i*len(beta_LPC) + (j+1)) + "/" + str(len(beta_LPC)*len(N_LPC)))
 
-        m_2, m_25, p25t_p2t, p3t_p25t, eta_LPC, eta_HPC, m_41, m_45, p45t_p41t, p5t_p45t, eta_LPT, eta_HPT = lpCoupling(beta_LPC[i],N_LPC[j],50,True)
+        m_2, m_25, p25t_p2t, p3t_p25t, eta_LPC, eta_HPC, m_41, m_45, p45t_p41t, p5t_p45t, eta_LPT, eta_HPT = lpCoupling(beta_LPC[i],N_LPC[j],200,0.25,True)
 
         map["mLPC"][i,j] = m_2
         map["piLPC"][i,j] = p25t_p2t

@@ -5,7 +5,7 @@ from DesignVariables import m_HPC_design, m_LPC_design, m_HPT_design, m_LPT_desi
 pi_LPC_design, pi_HPC_design, pi_HPT_design, pi_LPT_design
 from scipy.interpolate import RectBivariateSpline
 
-type = "LPC"
+type = "HPT"
 
 m_c_ref = 19.7890   #[kg/s]
 pi_c_ref = 6.6631   #[bar]

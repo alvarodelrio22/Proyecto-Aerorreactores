@@ -4,7 +4,7 @@ from Components.MapPlotFunction import componentPlot
 
 warnings.filterwarnings("ignore")
 
-Num_points = 250
+Num_points = 50
 beta_HPC = np.linspace(0,1,Num_points)
 N_HPC = np.linspace(0.45,1.08,Num_points)
 
@@ -20,7 +20,7 @@ for i in range(len(beta_HPC)):
 
         print("Iteration: " + str(i*len(beta_HPC) + (j+1)) + "/" + str(len(beta_HPC)*len(N_HPC)))
 
-        m_25, p3t_p25t, eta_HPC, m_41, p45t_p41t, eta_HPT = hpCoupling(beta_HPC[i],N_HPC[j],50,0.85,True)
+        m_25, p3t_p25t, eta_HPC, m_41, p45t_p41t, eta_HPT = hpCoupling(beta_HPC[i],N_HPC[j],100,0.9,True)
 
         map["mC"][i,j] = m_25
         map["piC"][i,j] = p3t_p25t
