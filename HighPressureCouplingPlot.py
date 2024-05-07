@@ -4,7 +4,7 @@ from Components.MapPlotFunction import componentPlot
 
 warnings.filterwarnings("ignore")
 
-Num_points = 50
+Num_points = 25
 beta_HPC = np.linspace(0,1,Num_points)
 N_HPC = np.linspace(0.45,1.08,Num_points)
 

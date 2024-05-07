@@ -36,12 +36,15 @@ N_ref_LPT = 7735.030858
 
 b_25 = 0.025
 b_3 = 0.05
+f_assumed = 0.025
 
+eta_d = 0.98
+eta_n = 0.97
 eta_mLP = 0.98
 eta_mHP = 0.99
 
 fuel_param_design = 1.56
 
-NPR_design = 4.681519
-A8 = 0.156473
-A9 = 0.217675
+NPR_design = 5.5826
+A8 = 0.133765
+A9 = 0.204020

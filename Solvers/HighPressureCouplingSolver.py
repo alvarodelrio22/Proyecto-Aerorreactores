@@ -1,10 +1,10 @@
 from Components.ComponentMap import compressor, turbine
-from Components.DesignVariables import p_ref, T_ref, R, gamma_c, gamma_e, Cp_c, Cp_e, N_ref_HPC, N_ref_HPT, b_25, b_3, eta_mHP
+from Components.DesignVariables import p_ref, T_ref, R, gamma_c, gamma_e, Cp_c, Cp_e, N_ref_HPC, N_ref_HPT, b_25, b_3, eta_mHP, f_assumed
 import numpy as np
 
-def hpCoupling(beta_HPC,N_HPC,num_iter,relaxation_factor,representing):
+def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
 
-    max_iterations = 5*num_iter
+    max_iterations = (1/(1-relaxation_factor))*num_iter0
 
 ## LPC Outlet - HPC Inlet (25t) -----------------------------------------------------------------------------------------------------------------------------
     
@@ -17,10 +17,14 @@ def hpCoupling(beta_HPC,N_HPC,num_iter,relaxation_factor,representing):
 
     if np.isnan(m_25) or np.isnan(p3t_p25t) or np.isnan(eta_HPC):
         
-        if representing == True:
+        if representing:
+
             return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+        
         else:
-            return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+
+            return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
+            np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
             
     T3t_T25t = 1 + 1/eta_HPC*(p3t_p25t**((gamma_c-1)/gamma_c)-1)
     m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
@@ -33,8 +37,6 @@ def hpCoupling(beta_HPC,N_HPC,num_iter,relaxation_factor,representing):
     error = np.NaN
     iterations = 0
 
-    f_assumed = 0.025
-
     while np.isnan(error) or error >= 1e-6:
 
         iterations = iterations + 1
@@ -43,10 +45,14 @@ def hpCoupling(beta_HPC,N_HPC,num_iter,relaxation_factor,representing):
 
             print("Limit time reached, no convergence: Modify the relaxation factor")
         
-            if representing == True:
+            if representing:
+
                 return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+            
             else:
-                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+
+                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
+                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
       
         T4t_T3t = T4t_T25t/T3t_T25t
 
@@ -84,35 +90,35 @@ def hpCoupling(beta_HPC,N_HPC,num_iter,relaxation_factor,representing):
         T4t_T25t_last = T4t_T25t
 
         T4t_T25t = 1/T41t_T4t*Cp_c*(T3t_T25t - 1)*(1 - b_25)/(eta_mHP*Cp_e*(1 - T45t_T41t)*
-        (1 + f_assumed - 0.5*b_3 - b_25))*(1 - relaxation_factor) + T4t_T25t*relaxation_factor
+        (1+f_assumed-0.5*b_3-b_25))*(1 - relaxation_factor) + T4t_T25t*relaxation_factor
 
         error = abs(T4t_T25t - T4t_T25t_last)
    
 ## Try new initial values of  T4t_T25t that might converge initially
    
-        if np.isnan(error) and iterations <= num_iter:
+        if np.isnan(error) and iterations <= num_iter0:
 
-            T4t_T25t = T3t_T25t*(num_iter - iterations)/num_iter + T4t_T25t_max*iterations/num_iter
+            T4t_T25t = T3t_T25t*(num_iter0 - iterations)/num_iter0 + T4t_T25t_max*iterations/num_iter0
 
-        elif np.isnan(error) and iterations > num_iter:
+        elif np.isnan(error) and iterations > num_iter0:
 
-            if representing == True:
+            if representing:
         
                 return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
             
             else:
 
-                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
+                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
 
-    T45t_T25t = T45t_T41t*T41t_T4t*T4t_T25t
-    p45t_p25t = p45t_p41t*p41t_p4t*p4t_p3t*p3t_p25t
     fuel_param = T4t_T3t - 1
     
-    if representing == True:
+    if representing:
         
         return m_25, p3t_p25t, eta_HPC, m_41, p45t_p41t, eta_HPT
     
     else:
 
-        return m_25, p3t_p25t, eta_HPC, m_41, p45t_p41t, eta_HPT, m_45, T45t_T25t, p45t_p25t, fuel_param
+        return m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
+        m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, fuel_param
         

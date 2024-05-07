@@ -1,9 +1,17 @@
 
-import csv, matplotlib as mpl, math as m, numpy as np
+import csv, matplotlib as mpl, math as m, numpy as np, warnings
 from matplotlib import pyplot as plt
+
+mpl.rcParams['mathtext.fontset'] = 'custom'
+mpl.rcParams['mathtext.rm'] = 'Cambria'
+mpl.rcParams['mathtext.it'] = 'Cambria:italic'
+mpl.rcParams['mathtext.bf'] = 'Cambria:bold'
+
 from DesignVariables import m_HPC_design, m_LPC_design, m_HPT_design, m_LPT_design, \
 pi_LPC_design, pi_HPC_design, pi_HPT_design, pi_LPT_design
 from scipy.interpolate import RectBivariateSpline
+
+warnings.filterwarnings('ignore')
 
 type = "HPT"
 
@@ -134,21 +142,22 @@ if type == "HPC":
     plt.xlim([np.floor(np.min(refined_map["m"])),np.ceil(np.max(refined_map["m"]))])
     plt.ylim([np.floor(np.min(refined_map["pi"])),np.ceil(np.max(refined_map["pi"]))])
 
-    xlabel = plt.xlabel(r"$\frac{\it G_{\rm 25} \sqrt{T_{\rm 25t}/T_{\rm ref}}}{p_{\rm 25t}/p_{\rm ref}} \ \left[\frac{\rm kg}{\rm s}\right]$",loc='center')
-    xlabel.set_fontsize(17)
+    xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 25} \sqrt{\!T_{\rm 25t}/T_{\rm ref}}}{p_{\rm 25t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
+    xlabel.set_fontsize(20)
     
-    ylabel = plt.ylabel(r"$\pi_{\rm HPC}$",loc='center')
-    ylabel.set_fontsize(17)
+    ylabel = plt.ylabel(r"$\pi_{\rm HPC}$",loc='center',rotation=0)
+    ylabel.set_fontsize(20)
+    ylabel.set_horizontalalignment('right')
 
     plt.title('HIGH PRESSURE COMPRESSOR MAP',fontsize = 14, weight = 'bold')
     plt.scatter(m_HPC_design,pi_HPC_design,100,marker='*',color='yellow',linewidth=1.25)
 
-    Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))/2.5,np.ceil(np.max(refined_map["pi"]))*(4.75/8),
-    r"$\frac{(N_{\rm HPC}/N_{\rm HPC,ref})}{\sqrt{T_{\rm 25t}/T_{\rm ref}}}$", fontsize=18)
-    Nlabel.set_fontsize(15)
+    Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))/2.6,np.ceil(np.max(refined_map["pi"]))*(4.75/8),
+    r"$\frac{\left(N_{\rm HPC}/N_{\rm HPC,ref}\right)}{\sqrt{\!T_{\rm 25t}/T_{\rm ref}}}$")
+    Nlabel.set_fontsize(18)
 
     colbar = plt.colorbar(comp_map)
-    colbar.set_label(r"$\it η_{\rm HPC}$",fontsize = 14)
+    colbar.set_label(r"$\it η_{\rm HPC}$",fontsize = 16, rotation=0, horizontalalignment='left')
     colbar.set_ticks(np.linspace(0.5,0.9,9))
     colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
 
@@ -160,21 +169,22 @@ elif type == "LPC":
     plt.xlim([np.floor(np.min(refined_map["m"])),np.ceil(np.max(refined_map["m"]))+1])
     plt.ylim([np.floor(np.min(refined_map["pi"])),np.ceil(np.max(refined_map["pi"]))])
 
-    xlabel = plt.xlabel(r"$\frac{\it G_{\rm 2} \sqrt{T_{\rm 2t}/T_{\rm ref}}}{p_{\rm 2t}/p_{\rm ref}} \ \left[\frac{\rm kg}{\rm s}\right]$",loc='center')
-    xlabel.set_fontsize(17)
+    xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 2} \sqrt{\!T_{\rm 2t}/T_{\rm ref}}}{p_{\rm 2t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
+    xlabel.set_fontsize(20)
     
-    ylabel = plt.ylabel(r"$\pi_{\rm LPC}$",loc='center')
-    ylabel.set_fontsize(17)
+    ylabel = plt.ylabel(r"$\pi_{\rm LPC}$",loc='center',rotation=0)
+    ylabel.set_fontsize(20)
+    ylabel.set_horizontalalignment('right')
 
     plt.title('LOW PRESSURE COMPRESSOR MAP',fontsize = 14, weight = 'bold')
     plt.scatter(m_LPC_design,pi_LPC_design,100,marker='*',color='yellow',linewidth=1.25)
 
-    Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))/2.5,np.ceil(np.max(refined_map["pi"]))*(4.75/8),
-    r"$\frac{(N_{\rm HPC}/N_{\rm HPC,ref})}{\sqrt{T_{\rm 25t}/T_{\rm ref}}}$", fontsize=18)
-    Nlabel.set_fontsize(15)
+    Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))/2.55,np.ceil(np.max(refined_map["pi"]))*(4.75/8),
+    r"$\frac{\left(N_{\rm LPC}/N_{\rm LPC,ref}\right)}{\sqrt{\!T_{\rm 25t}/T_{\rm ref}}}$")
+    Nlabel.set_fontsize(18)
 
     colbar = plt.colorbar(comp_map)
-    colbar.set_label(r"$\it η_{\rm LPC} \ \rm \left[-\right]$",fontsize = 14)
+    colbar.set_label(r"$\it η_{\rm LPC}$",fontsize = 16, rotation=0, horizontalalignment='left')
     colbar.set_ticks(np.linspace(0.5,0.9,9))
     colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
     plt.plot([np.ceil(np.max(refined_map["m"]))*(9.5/20), refined_map["m"][int(pos_N[14])][Num_refinement-1]],
@@ -183,23 +193,24 @@ elif type == "LPC":
 elif type == "HPT":
 
     plt.xlim([np.floor(np.min(refined_map["m"])),np.ceil(np.max(refined_map["m"]))])
-    plt.ylim([np.floor(np.min(refined_map["pi"])),np.ceil(np.max(refined_map["pi"]))-0.8])
+    plt.ylim([np.floor(np.min(refined_map["pi"])),np.ceil(np.max(refined_map["pi"]))-0.6])
 
-    xlabel = plt.xlabel(r"$\frac{\it G_{\rm 4} \sqrt{T_{\rm 4t}/T_{\rm ref}}}{p_{\rm 4t}/p_{\rm ref}} \ \left[\frac{\rm kg}{\rm s}\right]$",loc='center')
-    xlabel.set_fontsize(17)
+    xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 4} \sqrt{\!T_{\rm 4t}/T_{\rm ref}}}{p_{\rm 4t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
+    xlabel.set_fontsize(20)
     
-    ylabel = plt.ylabel(r"$\pi_{\rm HPT}$",loc='center')
-    ylabel.set_fontsize(17)
+    ylabel = plt.ylabel(r"$\pi_{\rm HPT}$",loc='center',rotation=0)
+    ylabel.set_fontsize(20)
+    ylabel.set_horizontalalignment('right')
 
     plt.title('HIGH PRESSURE TURBINE MAP',fontsize = 14, weight = 'bold')
     plt.scatter(m_HPT_design,pi_HPT_design,100,marker='*',color='yellow',linewidth=1.25)
 
     Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))*(3/4),np.ceil(np.max(refined_map["pi"]))*(4.5/8),
-    r"$\frac{(N_{\rm HPT}/N_{\rm HPT,ref})}{\sqrt{T_{\rm 4t}/T_{\rm ref}}}$", fontsize=18)
-    Nlabel.set_fontsize(15)
+    r"$\frac{\left(N_{\rm HPT}/N_{\rm HPT,ref}\right)}{\sqrt{\!T_{\rm 4t}/T_{\rm ref}}}$")
+    Nlabel.set_fontsize(18)
 
     colbar = plt.colorbar(comp_map)
-    colbar.set_label(r"$\it η_{\rm HPT} \ \rm \left[-\right]$",fontsize = 14)
+    colbar.set_label(r"$\it η_{\rm HPT}$",fontsize = 16, rotation=0, horizontalalignment='left')
     colbar.set_ticks(np.linspace(0.5,1,11))
     colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90","0.95","1"])
 
@@ -208,24 +219,25 @@ elif type == "HPT":
 
 elif type == "LPT":
 
-    plt.xlim([np.floor(np.min(refined_map["m"])),np.ceil(np.max(refined_map["m"]))+1])
+    plt.xlim([np.floor(np.min(refined_map["m"])),np.ceil(np.max(refined_map["m"]))])
     plt.ylim([np.floor(np.min(refined_map["pi"])),np.ceil(np.max(refined_map["pi"]))-0.2])
 
-    xlabel = plt.xlabel(r"$\frac{\it G_{\rm 45} \sqrt{T_{\rm 45t}/T_{\rm ref}}}{p_{\rm 45t}/p_{\rm ref}} \ \left[\frac{\rm kg}{\rm s}\right]$",loc='center')
-    xlabel.set_fontsize(17)
+    xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 45} \sqrt{\!T_{\rm 45t}/T_{\rm ref}}}{p_{\rm 45t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
+    xlabel.set_fontsize(20)
     
-    ylabel = plt.ylabel(r"$\pi_{\rm LPT}$",loc='center')
-    ylabel.set_fontsize(17)
+    ylabel = plt.ylabel(r"$\pi_{\rm LPT}$",loc='center',rotation=0)
+    ylabel.set_fontsize(20)
+    ylabel.set_horizontalalignment('right')
 
     plt.title('LOW PRESSURE TURBINE MAP',fontsize = 14, weight = 'bold')
     plt.scatter(m_LPT_design,pi_LPT_design,100,marker='*',color='yellow',linewidth=1.25)
 
     Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))*(3/4),np.ceil(np.max(refined_map["pi"]))*(5.75/8),
-    r"$\frac{(N_{\rm LPT}/N_{\rm LPT,ref})}{\sqrt{T_{\rm 45t}/T_{\rm ref}}}$", fontsize=18)
-    Nlabel.set_fontsize(15)
+    r"$\frac{\left(N_{\rm LPT}/N_{\rm LPT,ref}\right)}{\sqrt{\!T_{\rm 45t}/T_{\rm ref}}}$")
+    Nlabel.set_fontsize(18)
 
     colbar = plt.colorbar(comp_map)
-    colbar.set_label(r"$\it η_{\rm LPT} \ \rm \left[-\right]$",fontsize = 14)
+    colbar.set_label(r"$\it η_{\rm LPT}$",fontsize = 16, rotation=0, horizontalalignment='left')
     colbar.set_ticks(np.linspace(0.5,1,11))
     colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90","0.95","1"])
 

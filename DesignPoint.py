@@ -151,8 +151,8 @@ while np.isnan(error) or error >= 1e-8:
 
 N_ref_LPT = N_ref_LPC/np.sqrt(T45t_T2t)*N_LPC_design/N_LPT_design
 
-p5t_p45t = 1/pi_HPT_design
-m_5 = m_45*np.sqrt(T45t_T41t)/p45t_p41t
+p5t_p45t = 1/pi_LPT_design
+m_5 = m_45*np.sqrt(T5t_T45t)/p5t_p45t
 
 ## LPT Outlet (5t) - Nozzle Outlet (9) ----------------------------------------------------------------------------------------------------------------------
 
@@ -162,7 +162,7 @@ eta_n = 0.97
 
 # As NPR > 5 a variable convergent - divergent segment is considered for the nozzle. A full expansion is considered for the design configuration.
 # For NPR greater than 1.845, choke conditions happen for an engine embedded in ambient conditions. 
-# No bigger NPR can be achieved without this phenomenon happening.
+# No bigger NPR can be achieved without this phenomenon happening. It is assumed that the ambient conditions in the exit are p0, T0.
 
 NPR_design = p5t_p45t*p45t_p41t*p41t_p4t*p4t_p3t*p3t_p25t*p25t_p2t*p2t_p0
 
@@ -184,8 +184,42 @@ A9_A8 = (1+(1-1/eta_n)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(g
 
 A9 = A9_A8*A8
 
-print(m_LPC_design, m_HPC_design, m_HPT_design, m_LPT_design, pi_LPC_design, \
-pi_HPC_design, pi_HPT_design, pi_LPT_design, N_ref_LPC, N_ref_HPC, N_ref_HPT, N_ref_LPT, A8, A9, NPR_design, fuel_param_design)
+# In case the design parameters want to be printed on screen:
+
+print(" ")
+print("DESIGN POINT REPORT")
+print(" ")
+
+print("m* (LPC) [kg/s] = " + str(m_LPC_design))
+print("m* (HPC) [kg/s] = " + str(m_HPC_design))
+print("m* (HPT) [kg/s] = " + str(m_HPT_design))
+print("m* (LPT) [kg/s] = " + str(m_LPT_design))
+
+print("------------------------------------------")
+
+print("π (LPC) [-] = " + str(pi_LPC_design))
+print("π (HPC) [-] = " + str(pi_HPC_design))
+print("π (HPT) [-]] = " + str(pi_HPT_design))
+print("π (LPT) [-] = " + str(pi_LPT_design))
+
+print("------------------------------------------")
+
+print("N*/Nref* (LPC) [-] = " + str(N_LPC_design))
+print("N*/Nref* (HPC) [-] = " + str(N_HPC_design))
+print("N*/Nref* (HPT) [-] = " + str(N_HPT_design))
+print("N*/Nref* (LPT) [-] = " + str(N_LPT_design))
+
+print("------------------------------------------")
+
+print("ηcc·f·L/(Cp·T3t) [-] = " + str(fuel_param_design))
+
+print("------------------------------------------")
+
+print("A8 [m^2] = " + str(A8))
+print("A9 [m^2] = " + str(A9))
+print("NPR [-] = " + str(NPR_design))
+
+print(" ")
 
 
 
