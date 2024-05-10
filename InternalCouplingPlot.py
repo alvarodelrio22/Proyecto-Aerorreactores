@@ -1,9 +1,10 @@
+import numpy as np, matplotlib.tri as tri
+import warnings, time
+
 from Solvers.LowPressureCouplingSolver import lpCoupling
 from Components.MapPlotFunction import componentPlot
 from alive_progress import alive_bar
 
-import numpy as np, matplotlib.tri as tri
-import warnings, time
 warnings.filterwarnings("ignore")
 print(" ")
 
@@ -113,7 +114,7 @@ pltLPC.show()
 
 pltLPC.title('LOW PRESSURE COUPLING - LPC',fontsize = 14, weight = 'bold')
 
-colbar = pltLPC.colorbar(coupled_mapLPC)
+colbar = pltLPC.colorbar()
 colbar.set_label(r"$\it η_{\rm LPC}$",fontsize = 14)
 colbar.set_ticks(np.linspace(0.5,0.9,9))
 colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
