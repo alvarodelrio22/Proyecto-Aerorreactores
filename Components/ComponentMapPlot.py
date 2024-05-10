@@ -195,7 +195,7 @@ elif type == "HPT":
     plt.xlim([np.floor(np.min(refined_map["m"])),np.ceil(np.max(refined_map["m"]))])
     plt.ylim([np.floor(np.min(refined_map["pi"])),np.ceil(np.max(refined_map["pi"]))-0.6])
 
-    xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 4} \sqrt{\!T_{\rm 4t}/T_{\rm ref}}}{p_{\rm 4t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
+    xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 41} \sqrt{\!T_{\rm 41t}/T_{\rm ref}}}{p_{\rm 41t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
     xlabel.set_fontsize(20)
     
     ylabel = plt.ylabel(r"$\pi_{\rm HPT}$",loc='center',rotation=0)
@@ -206,7 +206,7 @@ elif type == "HPT":
     plt.scatter(m_HPT_design,pi_HPT_design,100,marker='*',color='yellow',linewidth=1.25)
 
     Nlabel = plt.text(np.ceil(np.max(refined_map["m"]))*(3/4),np.ceil(np.max(refined_map["pi"]))*(4.5/8),
-    r"$\frac{\left(N_{\rm HPT}/N_{\rm HPT,ref}\right)}{\sqrt{\!T_{\rm 4t}/T_{\rm ref}}}$")
+    r"$\frac{\left(N_{\rm HPT}/N_{\rm HPT,ref}\right)}{\sqrt{\!T_{\rm 41t}/T_{\rm ref}}}$")
     Nlabel.set_fontsize(18)
 
     colbar = plt.colorbar(comp_map)

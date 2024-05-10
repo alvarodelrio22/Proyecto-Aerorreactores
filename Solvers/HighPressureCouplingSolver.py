@@ -24,7 +24,7 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
         else:
 
             return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
-            np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+            np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
             
     T3t_T25t = 1 + 1/eta_HPC*(p3t_p25t**((gamma_c-1)/gamma_c)-1)
     m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
@@ -52,7 +52,7 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
             else:
 
                 return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
-                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
       
         T4t_T3t = T4t_T25t/T3t_T25t
 
@@ -109,7 +109,7 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
             else:
 
                 return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
-                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
 
     fuel_param = T4t_T3t - 1
     
@@ -119,6 +119,6 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
     
     else:
 
-        return m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
+        return T3t_T25t, p3t_p25t, eta_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
         m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, fuel_param
         
