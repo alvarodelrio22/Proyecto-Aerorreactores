@@ -25,11 +25,12 @@ M0_design = 0.8  # [-]
 pi_LPC_design = 2.74
 pi_HPC_design = 3.28
 
-N_ref_LPC = 972.0187*np.sqrt(T_ref)
-N_ref_HPC = 778.5837*np.sqrt(T_ref)
+N_ref_LPC = 16500.0  # [rpm]
+N_ref_HPC = 13216.4  # [rpm]
 
 b_25 = 0.025
 b_3 = 0.05
+momentum_factor = 0.5
 
 eta_mLP = 0.98
 eta_mHP = 0.99
@@ -86,25 +87,24 @@ m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
 
 T4t_T3t = 1 + fuel_param_design
 f_assumed = 0.025
+A3 = 0.9  # [m^2]
 
-PLF = 0.27 + 0.015*(T4t_T3t - 1)
-p4t_p3t = 1 - PLF/2*(m_3*np.sqrt(R)*np.sqrt(T_ref)/(p_ref*1e5)/0.06)**2
+PLF = 27 + 15*(T4t_T3t - 1)
+p4t_p3t = 1 - PLF/2*(m_3*np.sqrt(R)*np.sqrt(T_ref)/(p_ref*1e5)/A3)**2
     
-m_4 =  m_3/(1-b_25-b_3)*(1+f_assumed-b_25-b_3)*np.sqrt(T4t_T3t)/p4t_p3t
+m_4 =  m_3*(1+f_assumed)*np.sqrt(T4t_T3t)/p4t_p3t
 
 ## NGV Bleed Injection - HPT Inlet (41t) --------------------------------------------------------------------------------------------------------------------
 
 p41t_p4t = 1
-T41t_T4t = (m_4 + b_3*m_25/(1-b_25)*np.sqrt(T4t_T3t*T3t_T25t)*1/p3t_p25t*1/p4t_p3t*
-Cp_c/Cp_e*(1/(T4t_T3t*T3t_T25t)))/(m_4 + b_3*m_25/(1-b_25)*np.sqrt(T4t_T3t*T3t_T25t)*1/p3t_p25t*1/p4t_p3t)
+T41t_T4t = ((1+f_assumed)*(1-b_25-b_3) + b_3*(Cp_c/Cp_e)*(1/T4t_T3t))/((1+f_assumed)*(1-b_25-b_3) + b_3)
    
-m_41 = m_4/(1+f_assumed-b_25-b_3)*(1+f_assumed-b_25)*np.sqrt(T41t_T4t)/p41t_p4t
+m_41 = m_4/((1+f_assumed)*(1-b_25-b_3))*((1+f_assumed)*(1-b_25-b_3)+momentum_factor*b_3)*np.sqrt(T41t_T4t)/p41t_p4t
 m_HPT_design = m_41
 
 # From power equilibrium and speed compatibility:
 
-T41t_T25t = T41t_T4t*T4t_T3t*T3t_T25t
-T45t_T41t = 1 - Cp_c*(1 - b_25)*(T3t_T25t - 1)/(eta_mHP*Cp_e*T41t_T25t*(1 + f_assumed - 0.5*b_3 - b_25))
+T45t_T41t = 1 - (1 - b_25)*(T3t_T25t - 1)/(eta_mHP*(Cp_e/Cp_c)*(T41t_T4t*T4t_T3t*T3t_T25t)*((1+f_assumed)*(1-b_25-b_3)+momentum_factor*b_3))
 
 N_HPT_design = 1
 error = np.NaN
@@ -121,18 +121,17 @@ while np.isnan(error) or error >= 1e-8:
     
     N_HPT_design = newton(f,N_HPT_design)
 
-N_ref_HPT = N_ref_HPC/np.sqrt(T41t_T25t)*N_HPC_design/N_HPT_design
+N_ref_HPT = (N_ref_HPC*N_HPC_design)/np.sqrt(T41t_T4t*T4t_T3t*T3t_T25t)/N_HPT_design
 
 p45t_p41t = 1/pi_HPT_design
-m_45 = m_41*np.sqrt(T45t_T41t)/p45t_p41t
+m_45 = m_41/((1+f_assumed)*(1-b_25-b_3)+momentum_factor*b_3)*((1+f_assumed)*(1-b_25-b_3)+b_3)*np.sqrt(T45t_T41t)/p45t_p41t
 m_LPT_design = m_45
 
 ## HPT Outlet - LPT Inlet (45t) -----------------------------------------------------------------------------------------------------------------------------
 
 # From power equilibrium and speed compatibility:
 
-T45t_T2t = T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t
-T5t_T45t = 1 - Cp_c*(T25t_T2t-1)/(eta_mLP*Cp_e*T45t_T2t*(1 + f_assumed - b_25))
+T5t_T45t = 1 - (T25t_T2t-1)/(eta_mLP*(Cp_e/Cp_c)*(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t)*((1+f_assumed)*(1-b_25-b_3)+b_3))
 
 N_LPT_design = 1
 error = np.NaN
@@ -149,7 +148,7 @@ while np.isnan(error) or error >= 1e-8:
     
     N_LPT_design = newton(f,N_LPT_design)
 
-N_ref_LPT = N_ref_LPC/np.sqrt(T45t_T2t)*N_LPC_design/N_LPT_design
+N_ref_LPT = N_ref_LPC/np.sqrt(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t)*N_LPC_design/N_LPT_design
 
 p5t_p45t = 1/pi_LPT_design
 m_5 = m_45*np.sqrt(T5t_T45t)/p5t_p45t
@@ -190,34 +189,41 @@ print(" ")
 print("DESIGN POINT REPORT")
 print(" ")
 
-print("m* (LPC) [kg/s] = " + str(m_LPC_design))
-print("m* (HPC) [kg/s] = " + str(m_HPC_design))
-print("m* (HPT) [kg/s] = " + str(m_HPT_design))
-print("m* (LPT) [kg/s] = " + str(m_LPT_design))
+print("m* (LPC) [kg/s] = " + str(np.round(m_LPC_design,5)))
+print("m* (HPC) [kg/s] = " + str(np.round(m_HPC_design,5)))
+print("m* (HPT) [kg/s] = " + str(np.round(m_HPT_design,5)))
+print("m* (LPT) [kg/s] = " + str(np.round(m_LPT_design,5)))
 
 print("------------------------------------------")
 
-print("π (LPC) [-] = " + str(pi_LPC_design))
-print("π (HPC) [-] = " + str(pi_HPC_design))
-print("π (HPT) [-]] = " + str(pi_HPT_design))
-print("π (LPT) [-] = " + str(pi_LPT_design))
+print("π (LPC) [-] = " + str(np.round(pi_LPC_design,5)))
+print("π (HPC) [-] = " + str(np.round(pi_HPC_design,5)))
+print("π (HPT) [-] = " + str(np.round(pi_HPT_design,5)))
+print("π (LPT) [-] = " + str(np.round(pi_LPT_design,5)))
 
 print("------------------------------------------")
 
-print("N*/Nref* (LPC) [-] = " + str(N_LPC_design))
-print("N*/Nref* (HPC) [-] = " + str(N_HPC_design))
-print("N*/Nref* (HPT) [-] = " + str(N_HPT_design))
-print("N*/Nref* (LPT) [-] = " + str(N_LPT_design))
+print("N*/Nref* (LPC) [-] = " + str(np.round(N_LPC_design,5)))
+print("N*/Nref* (HPC) [-] = " + str(np.round(N_HPC_design,5)))
+print("N*/Nref* (HPT) [-] = " + str(np.round(N_HPT_design,5)))
+print("N*/Nref* (LPT) [-] = " + str(np.round(N_LPT_design,5)))
 
 print("------------------------------------------")
 
-print("ηcc·f·L/(Cp·T3t) [-] = " + str(fuel_param_design))
+print("Nref* (LPC) [rpm] = " + str(np.round(N_ref_LPC,5)))
+print("Nref* (HPC) [rpm] = " + str(np.round(N_ref_HPC,5)))
+print("Nref* (HPT) [rpm] = " + str(np.round(N_ref_HPT,5)))
+print("Nref* (LPT) [rpm] = " + str(np.round(N_ref_LPT,5)))
 
 print("------------------------------------------")
 
-print("A8 [m^2] = " + str(A8))
-print("A9 [m^2] = " + str(A9))
-print("NPR [-] = " + str(NPR_design))
+print("ηcc·f·L/(Cp·T3t) [-] = " + str(np.round(fuel_param_design,5)))
+
+print("------------------------------------------")
+
+print("A8 [m^2] = " + str(np.round(A8,5)))
+print("A9 [m^2] = " + str(np.round(A9,5)))
+print("NPR [-] = " + str(np.round(NPR_design,5)))
 
 print(" ")
 

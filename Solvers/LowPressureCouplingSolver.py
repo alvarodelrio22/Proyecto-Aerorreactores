@@ -1,22 +1,27 @@
 from Components.ComponentMap import compressor, turbine
 from Solvers.HighPressureCouplingSolver import hpCoupling
-from Components.DesignVariables import gamma_c, gamma_e, Cp_c, Cp_e, N_ref_LPC, N_ref_LPT, b_25, eta_mLP, f_assumed
+from Components.DesignVariables import gamma_c, gamma_e, Cp_c, Cp_e, N_ref_LPC, N_ref_LPT, b_25, b_3, eta_mLP, f_assumed
 import numpy as np
 
 # Using a Newton - Rhapson method with Succesive Over - Relaxation Method
 
 def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
 
-    max_iter = 10*num_iter0
+    max_iter = 7.5*num_iter0
 
 ## Diffuser Outlet - LPC Inlet (2t) -------------------------------------------------------------------------------------------------------------------------
 
     m_2 = compressor(beta_LPC,N_LPC,"beta","N","m","LPC")
 
 ## LPC Outlet - HPC Inlet (25t) -----------------------------------------------------------------------------------------------------------------------------
-    
-    p25t_p2t = compressor(beta_LPC,N_LPC,"beta","N","pi","LPC")
-    eta_LPC = compressor(beta_LPC,N_LPC,"beta","N","eta","LPC")
+
+    if representing:
+        p25t_p2t = compressor(beta_LPC,N_LPC,"beta","N","pi","LPC")
+        eta_LPC = compressor(beta_LPC,N_LPC,"beta","N","eta","LPC") 
+    else:
+        p25t_p2t = compressor(m_2,N_LPC,"m","N","pi","LPC")
+        eta_LPC = compressor(m_2,N_LPC,"m","N","eta","LPC") 
+
 
     if np.isnan(m_2) or np.isnan(p25t_p2t) or np.isnan(eta_LPC):
         
@@ -43,7 +48,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
         N_HPC = compressor(m_25, beta_HPC, "m", "beta", "N", "HPC")
 
         T3t_T25t, p3t_p25t, eta_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
-        m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, fuel_param = hpCoupling(beta_HPC, N_HPC, 100, 0.9, False)
+        m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, fuel_param = hpCoupling(beta_HPC, N_HPC, 150, 0.85, False)
         
         N_LPT = (N_LPC*N_ref_LPC)/np.sqrt(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t)/N_ref_LPT
 
@@ -58,7 +63,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
             # Power balance (HPC-HPT) and solution
             # Determination of a new value for beta_HPC
 
-            T25t_T2t_est = 1/(1 - eta_mLP*Cp_e/Cp_c*T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*(1 + f_assumed - b_25)*(1 - T5t_T45t))
+            T25t_T2t_est = 1/(1 - eta_mLP*(Cp_e/Cp_c)*T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*((1+f_assumed)*(1-b_25-b_3)+b_3)*(1 - T5t_T45t))
             signed_error = T25t_T2t_est - T25t_T2t
 
             return signed_error
@@ -76,7 +81,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
     error = np.NaN
     iterations = 0
 
-    while np.isnan(error) or error >= 1e-7:
+    while np.isnan(error) or error >= 1e-5:
 
         iterations = iterations + 1
 
@@ -97,6 +102,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
                 np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
 
         signed_error = hpIterations(beta_HPC,True)
+        error = abs(signed_error)
 
         if np.isnan(signed_error) and iterations <= num_iter0:
 
@@ -126,7 +132,6 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
 
             beta_HPC_star = beta_HPC - 1/dtau_dbeta*signed_error
             beta_HPC = beta_HPC_star*(1-relaxation_factor) + beta_HPC*relaxation_factor
-            error = abs(signed_error)
         
     T3t_T25t, p3t_p25t, eta_HPC, N_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
     m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param = hpIterations(beta_HPC, False)

@@ -7,21 +7,33 @@ from scipy.optimize import newton
 
 # Define the components as functions
 
-# Compressor: ---------------------------------------------------------------------------------------------------------------------------------------------
+## Compressor: --------------------------------------------------------------------------------------------------------------------------------------------
+
+    # Definition of map interpolation:
+
+beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
+N_data = [0.45,0.5,0.6,0.7,0.8,0.85,0.90,0.92,0.94,0.955,0.98,1,1.04,1.08]
+splineC, generic_mapC = {}, {}
     
+Num_refinement = 50
+precision = 3
+
+beta_refined = np.linspace(np.min(beta_data), np.max(beta_data),Num_refinement)
+N_refined = np.linspace(np.min(N_data), np.max(N_data),Num_refinement)
+
+m_c_ref = 19.7890   #[kg/s]
+pi_c_ref = 6.6631   #[bar]
+
+for name in {"m", "pi", "eta"}:
+        file = open("CSV Files/"+"C"+name+"Gen.csv", 'r')
+        csvreader = csv.reader(file)
+        data = list(csvreader)
+        generic_mapC[name] = np.double(np.array(data))
+        splineC[name] = RectBivariateSpline(beta_data, N_data, np.transpose(generic_mapC[name]), kx = precision, ky = precision)
+
+    # Function definition:       
+
 def compressor(input1,input2,inputname1,inputname2,outputname,type):
-
-    beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
-    N_data = [0.45,0.5,0.6,0.7,0.8,0.85,0.90,0.92,0.94,0.955,0.98,1,1.04,1.08]
-    
-    Num_refinement = 250
-    precision = 3
-
-    beta_refined = np.linspace(np.min(beta_data), np.max(beta_data),Num_refinement)
-    N_refined = np.linspace(np.min(N_data), np.max(N_data),Num_refinement)
-
-    m_c_ref = 19.7890   #[kg/s]
-    pi_c_ref = 6.6631   #[bar]
 
     if type == "HPC":
 
@@ -38,35 +50,31 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
         print("Unrecognized type of compressor")
         exit()
 
-    ## Load Generic data:
+    # Second input name:
 
     if inputname2 != "beta" and inputname2 != "N":
         print("Not a valid entry")
         exit()
     elif inputname2 == "N":
         if input2 < np.min(N_data) or input2 > np.max(N_data):
-            # print("Wrong speed input")
             return np.NaN
     elif inputname2 == "beta":
         if input2 < np.min(beta_data) or input2 > np.max(beta_data):
-            # print("Wrong beta input")
             return np.NaN
+        
+    # Output name:
 
     if outputname == "m" or outputname == "eta" or outputname == "pi" or outputname == "beta" or outputname == "N":
 
         if outputname != "beta" and outputname != "N":
-        
-            file = open("CSV Files/"+"C"+outputname+"Gen.csv", 'r')
-            csvreader = csv.reader(file)
-            data = list(csvreader)
-            map = np.double(np.array(data))
 
-            interp = RectBivariateSpline(beta_data, N_data, np.transpose(map), kx = precision, ky = precision)
+            interp = splineC[outputname]
+
+        # Input names are beta and N:
         
         if inputname1 == "beta" and inputname2 == "N":
 
             if input1 < np.min(beta_data) or input1 > np.max(beta_data):
-                # print("Wrong beta input")
                 input1 = np.NaN
 
             if outputname == "m":
@@ -78,18 +86,15 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
 
             return value
         
-        file = open("CSV Files/"+"C"+inputname1+"Gen.csv", 'r')
-        csvreader = csv.reader(file)
-        data = list(csvreader)
-        map2 = np.double(np.array(data))
+        interp2 = splineC[inputname1]
 
-        interp2 = RectBivariateSpline(beta_data, N_data, np.transpose(map2), kx = precision, ky = precision)
+        # Case 1 for the first input name when N or beta:
         
         if inputname1 != "N" and inputname2 == "beta":
 
             if inputname1 == "m":
 
-                if input1 < np.min(m_scale_factor*map2) or input1 > np.max(m_scale_factor*map2):         
+                if input1 < np.min(m_scale_factor*generic_mapC[inputname1]) or input1 > np.max(m_scale_factor*generic_mapC[inputname1]):         
                     return np.NaN
 
                 def f(x):
@@ -97,7 +102,8 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "pi":
 
-                if input1 < np.min(pi_scale_factor*(map2 - 1) + 1) or input1 > np.max(pi_scale_factor*(map2 - 1) + 1):        
+                if input1 < np.min(pi_scale_factor*(generic_mapC[inputname1] - 1) + 1) or input1 > \
+                np.max(pi_scale_factor*(generic_mapC[inputname1] - 1) + 1):        
                     return np.NaN
 
                 def f(x):
@@ -105,7 +111,7 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "eta":
 
-                if input1 < np.min(map2) or input1 > np.max(map2):       
+                if input1 < np.min(generic_mapC[inputname1]) or input1 > np.max(generic_mapC[inputname1]):       
                     return np.NaN
 
                 def f(x):
@@ -113,7 +119,7 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
             
             N_values = newton(f,N_refined,tol = 1e-6, maxiter = 100)
             N = np.NaN
-            tolerance = 1e-4
+            tolerance = 1e-5
 
             for k in range(len(N_values)):
 
@@ -135,11 +141,13 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
 
             return value
         
+        # Case 2 for the first input name when N or beta:
+        
         elif inputname1 != "beta" and inputname2 == "N":
 
             if inputname1 == "m":
 
-                if input1 < np.min(m_scale_factor*map2) or input1 > np.max(m_scale_factor*map2):        
+                if input1 < np.min(m_scale_factor*generic_mapC[inputname1]) or input1 > np.max(m_scale_factor*generic_mapC[inputname1]):    
                     return np.NaN
         
                 def f(x):
@@ -147,15 +155,16 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "pi":
 
-                if input1 < np.min(pi_scale_factor*(map2 - 1) + 1) or input1 > np.max(pi_scale_factor*(map2 - 1) + 1):        
+                if input1 < np.min(pi_scale_factor*(generic_mapC[inputname1] - 1) + 1) or input1 > \
+                np.max(pi_scale_factor*(generic_mapC[inputname1] - 1) + 1):        
                     return np.NaN
 
                 def f(x):
-                    return np.abs(pi_scale_factor*(interp2.ev(x,input2)-1)+1 - input1)
+                    return np.abs(pi_scale_factor*(interp2.ev(x,input2) - 1) + 1 - input1)
                 
             elif inputname1 == "eta":
 
-                if input1 < np.min(map2) or input1 > np.max(map2):       
+                if input1 < np.min(generic_mapC[inputname1]) or input1 > np.max(generic_mapC[inputname1]):       
                     return np.NaN
 
                 def f(x):
@@ -163,7 +172,7 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
             
             beta_values = newton(f,beta_refined,tol = 1e-6, maxiter = 100)
             beta = np.NaN
-            tolerance = 1e-4
+            tolerance = 1e-5
 
             for k in range(len(beta_values)):
 
@@ -190,21 +199,33 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
         print("Unrecognized variable to output")
         exit()
 
-# Turbine---------------------------------------------------------------------------------------------------------------------------------------------------
+## Turbine--------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Definition of map interpolation:
+
+beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
+N_data = [0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2]
+splineT, generic_mapT = {}, {}
+
+Num_refinement = 50
+precision = 3
+
+beta_refined = np.linspace(np.min(beta_data), np.max(beta_data),Num_refinement)
+N_refined = np.linspace(np.min(N_data), np.max(N_data),Num_refinement)
+
+m_t_ref = 19.8100  #[kg/s]
+pi_t_ref = 2.5000  #[bar]
+
+for name in {"m", "pi", "eta"}:
+        file = open("CSV Files/"+"T"+name+"Gen.csv", 'r')
+        csvreader = csv.reader(file)
+        data = list(csvreader)
+        generic_mapT[name] = np.double(np.array(data))
+        splineT[name] = RectBivariateSpline(beta_data, N_data, np.transpose(generic_mapT[name]), kx = precision, ky = precision)
+
+# Function definition:
 
 def turbine(input1,input2,inputname1,inputname2,outputname,type):
-
-    beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
-    N_data = [0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2]
-    
-    Num_refinement = 250
-    precision = 3
-
-    beta_refined = np.linspace(np.min(beta_data), np.max(beta_data),Num_refinement)
-    N_refined = np.linspace(np.min(N_data), np.max(N_data),Num_refinement)
-
-    m_t_ref = 19.8100  #[kg/s]
-    pi_t_ref = 2.5000  #[bar]
 
     if type == "HPT":
 
@@ -221,35 +242,31 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
         print("Unrecognized type of turbine")
         exit()
 
-    ## Load Generic data:
+    # Second input name:
 
     if inputname2 != "beta" and inputname2 != "N":
         print("Not a valid entry")
         exit()
     elif inputname2 == "N":
         if input2 < np.min(N_data) or input2 > np.max(N_data):
-            # print("Wrong speed input")
             return np.NaN
     elif inputname2 == "beta":
         if input2 < np.min(beta_data) or input2 > np.max(beta_data):
-            # print("Wrong beta input")
             return np.NaN
+        
+    # Output name:
 
     if outputname == "m" or outputname == "eta" or outputname == "pi" or outputname == "beta" or outputname == "N":
 
         if outputname != "beta" and outputname != "N":
         
-            file = open("CSV Files/"+"T"+outputname+"Gen.csv", 'r')
-            csvreader = csv.reader(file)
-            data = list(csvreader)
-            map = np.double(np.array(data))
+            interp = splineT[outputname]
 
-            interp = RectBivariateSpline(beta_data, N_data, np.transpose(map), kx = precision, ky = precision)
+        # Input names are beta and N:
         
         if inputname1 == "beta" and inputname2 == "N":
 
             if input1 < np.min(beta_data) or input1 > np.max(beta_data):
-                # print("Wrong beta input")
                 return np.NaN
 
             if outputname == "m":
@@ -261,18 +278,15 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
 
             return value
         
-        file = open("CSV Files/"+"T"+inputname1+"Gen.csv", 'r')
-        csvreader = csv.reader(file)
-        data = list(csvreader)
-        map2 = np.double(np.array(data))
+        interp2 = splineT[inputname1]
 
-        interp2 = RectBivariateSpline(beta_data, N_data, np.transpose(map2), kx = precision, ky = precision)
+        # Case 1 for the first input name when N or beta:
         
         if inputname1 != "N" and inputname2 == "beta":
 
             if inputname1 == "m":
 
-                if input1 < np.min(m_scale_factor*map2) or input1 > np.max(m_scale_factor*map2):        
+                if input1 < np.min(m_scale_factor*generic_mapT[inputname1]) or input1 > np.max(m_scale_factor*generic_mapT[inputname1]):        
                     return np.NaN
 
                 def f(x):
@@ -280,7 +294,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "pi":
 
-                if input1 < np.min(pi_scale_factor*(map2 - 1) + 1) or input1 > np.max(pi_scale_factor*(map2 - 1) + 1):        
+                if input1 < np.min(pi_scale_factor*(generic_mapT[inputname1] - 1) + 1) or input1 > np.max(pi_scale_factor*(generic_mapT[inputname1] - 1) + 1):        
                     return np.NaN
 
                 def f(x):
@@ -288,7 +302,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "eta":
 
-                if input1 < np.min(map2) or input1 > np.max(map2):        
+                if input1 < np.min(generic_mapT[inputname1]) or input1 > np.max(generic_mapT[inputname1]):        
                     return np.NaN
 
                 def f(x):
@@ -296,7 +310,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
             
             N_values = newton(f,N_refined,tol = 1e-6, maxiter = 100)
             N = np.NaN
-            tolerance = 1e-4
+            tolerance = 1e-5
 
             for k in range(len(N_values)):
 
@@ -318,11 +332,13 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
 
             return value
         
+        # Case 2 for the first input name when N or beta:
+        
         elif inputname1 != "beta" and inputname2 == "N":
 
             if inputname1 == "m":
 
-                if input1 < np.min(m_scale_factor*map2) or input1 > np.max(m_scale_factor*map2):        
+                if input1 < np.min(m_scale_factor*generic_mapT[inputname1]) or input1 > np.max(m_scale_factor*generic_mapT[inputname1]):        
                     return np.NaN
 
                 def f(x):
@@ -330,7 +346,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "pi":
 
-                if input1 < np.min(pi_scale_factor*(map2 - 1) + 1) or input1 > np.max(pi_scale_factor*(map2 - 1) + 1):        
+                if input1 < np.min(pi_scale_factor*(generic_mapT[inputname1] - 1) + 1) or input1 > np.max(pi_scale_factor*(generic_mapT[inputname1] - 1) + 1):        
                     return np.NaN
 
                 def f(x):
@@ -338,7 +354,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
                 
             elif inputname1 == "eta":
 
-                if input1 < np.min(map2) or input1 > np.max(map2):        
+                if input1 < np.min(generic_mapT[inputname1]) or input1 > np.max(generic_mapT[inputname1]):        
                     return np.NaN
 
                 def f(x):
@@ -346,7 +362,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
             
             beta_values = newton(f,beta_refined,tol = 1e-6, maxiter = 100)
             beta = np.NaN
-            tolerance = 1e-4
+            tolerance = 1e-5
 
             for k in range(len(beta_values)):
 
