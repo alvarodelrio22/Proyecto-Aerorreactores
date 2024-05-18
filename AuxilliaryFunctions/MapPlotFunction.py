@@ -159,7 +159,7 @@ def componentPlot(type,show):
         Nlabel.set_fontsize(18)
 
         if show == True:
-            colbar.set_label(r"$\it η_{\rm HPC}$",fontsize = 16, rotation=0, horizontalalignment='left')
+            colbar.set_label(r"$\it η_{\rm HPC}$",fontsize = 18, rotation=0, horizontalalignment='left')
             colbar.set_ticks(np.linspace(0.5,0.9,9))
             colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])         
 
@@ -186,7 +186,7 @@ def componentPlot(type,show):
         Nlabel.set_fontsize(18)
 
         if show == True:
-            colbar.set_label(r"$\it η_{\rm LPC}$",fontsize = 16, rotation=0, horizontalalignment='left')
+            colbar.set_label(r"$\it η_{\rm LPC}$",fontsize = 18, rotation=0, horizontalalignment='left')
             colbar.set_ticks(np.linspace(0.5,0.9,9))
             colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
 
@@ -213,7 +213,7 @@ def componentPlot(type,show):
         Nlabel.set_fontsize(18)
 
         if show == True:   
-            colbar.set_label(r"$\it η_{\rm HPT}$",fontsize = 16, rotation=0, horizontalalignment='left')
+            colbar.set_label(r"$\it η_{\rm HPT}$",fontsize = 18, rotation=0, horizontalalignment='left')
             colbar.set_ticks(np.linspace(0.5,1,11))
             colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90","0.95","1"])
 
@@ -240,7 +240,7 @@ def componentPlot(type,show):
         Nlabel.set_fontsize(18)
 
         if show == True:
-            colbar.set_label(r"$\it η_{\rm LPT}$",fontsize = 16, rotation=0, horizontalalignment='left')
+            colbar.set_label(r"$\it η_{\rm LPT}$",fontsize = 18, rotation=0, horizontalalignment='left')
             colbar.set_ticks(np.linspace(0.5,1,11))
             colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90","0.95","1"])
 

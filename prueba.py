@@ -15,7 +15,7 @@ N_LPC = 0.9949540661360499
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-m_2, T25t_T2t, p25t_p2t, eta_LPC, N_LPC, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
+m_2, T25t_T2t, p25t_p2t, eta_LPC, N_LPC_, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
 m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, \
 m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param  = lpCoupling(beta_LPC, N_LPC, 15, 0.15, False)
 

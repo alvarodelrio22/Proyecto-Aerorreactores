@@ -15,8 +15,8 @@ contour = False
 
 # Points to plot: -------------------------------------------------------------------------------------------------------------------------------------------
 
-Num_points_beta = 10
-Num_points_N = 20
+Num_points_beta = 100
+Num_points_N = 200
 
 # Boundaries: -----------------------------------------------------------------------------------------------------------------------------------------------
  
@@ -31,8 +31,8 @@ relaxation_B_lim = [max_beta, 0.90, 0.85, min_beta]
 relaxation_N_lim = [min_N, 0.70, 0.95, max_N]
 relaxation_matrix = \
 [[0.00,0.75,0.80],
- [0.00,0.55,0.45],
- [0.35,0.00,0.00]]
+ [0.00,0.65,0.55],
+ [0.45,0.00,0.00]]
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ for x in var:
 pltLPC = componentPlot("LPC",False)
 
 if contour:
-    triangulation = triangulate("LPC",0.9997,0.05)
+    triangulation = triangulate("LPC",0.99969,1)
     coupled_mapLPC = pltLPC.tricontourf(triangulation,map["etaLPC"],np.linspace(0.5,0.9,100),cmap='jet')
 else:
     coupled_mapLPC = pltLPC.scatter(map["mLPC"],map["piLPC"],1,vmin=0.5,vmax=0.9,c=map["etaLPC"],marker="x",cmap="jet")
@@ -141,8 +141,8 @@ pltLPC.show()
 pltHPC = componentPlot("HPC",False)
 
 if contour:
-    triangulation = triangulate("HPC",1,0.005)
-    coupled_mapHPC = pltHPC.tricontourf(triangulation,np.append(map["etaHPC"],np.NaN),np.linspace(0.5,0.9,100), cmap='jet')
+    triangulation = triangulate("HPC",1,0.0075)
+    coupled_mapHPC = pltHPC.tricontourf(triangulation,map["etaHPC"],np.linspace(0.5,0.9,100), cmap='jet')
 else:    
     coupled_mapHPC = pltHPC.scatter(map["mHPC"],map["piHPC"],1,vmin=0.5,vmax=0.9,c=map["etaHPC"],marker="x",cmap="jet")
 
@@ -179,7 +179,7 @@ pltHPT.show()
 pltLPT = componentPlot("LPT",False)
 
 if contour:
-    triangulation = triangulate("LPT",1,1)
+    triangulation = triangulate("LPT",1,0.00233)
     coupled_mapLPT = pltLPT.tricontourf(triangulation,map["etaLPT"],np.linspace(0.7,0.95,100), cmap='jet')
 else:
     coupled_mapLPT = pltLPT.scatter(map["mLPT"],map["piLPT"],1,vmin=0.7,vmax=0.95,c=map["etaLPT"],marker="x",cmap="jet")
