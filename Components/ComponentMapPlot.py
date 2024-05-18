@@ -45,8 +45,8 @@ elif type == "LPT":
 # not necessarily coincident with the actual cycle design point,
 # referred to as simply "design".
 
-## Map plot: -----------------------------------------------------------------------------------------------------------------------------------------------
-    
+## MAP PLOT: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  
 # Choose number of points to plot, beta lines, speed lines,
 # and number of contours
 

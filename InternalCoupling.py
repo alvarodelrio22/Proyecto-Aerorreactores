@@ -1,7 +1,7 @@
 import numpy as np, matplotlib.tri as tri
 import warnings, time
 
-from Solvers.LowPressureCouplingSolver import lpCoupling
+from Solvers.InternalCouplingSolver import lpCoupling
 from AuxilliaryFunctions.RelaxationFactor import relaxation_factor
 from AuxilliaryFunctions.MapPlotFunction import componentPlot
 from alive_progress import alive_bar
@@ -15,8 +15,8 @@ contour = False
 
 # Points to plot: -------------------------------------------------------------------------------------------------------------------------------------------
 
-Num_points_beta = 200
-Num_points_N = 500
+Num_points_beta = 10
+Num_points_N = 20
 
 # Boundaries: -----------------------------------------------------------------------------------------------------------------------------------------------
  

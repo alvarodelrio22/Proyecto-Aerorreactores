@@ -1,6 +1,6 @@
 import numpy as np, warnings, time
 
-from Solvers.HighPressureCouplingSolver import hpCoupling
+from Solvers.InternalCouplingSolver import hpCoupling
 from AuxilliaryFunctions.RelaxationFactor import relaxation_factor
 from AuxilliaryFunctions.MapPlotFunction import componentPlot
 from alive_progress import alive_bar
@@ -13,8 +13,8 @@ contour = True
 
 # Points to plot: -------------------------------------------------------------------------------------------------------------------------------------------
 
-Num_points_beta = 100
-Num_points_N = 100
+Num_points_beta = 50
+Num_points_N = 50
 
 # Boundaries: -----------------------------------------------------------------------------------------------------------------------------------------------
  

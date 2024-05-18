@@ -1,13 +1,8 @@
-from Solvers.HighPressureCouplingSolver import hpCoupling
-from Solvers.LowPressureCouplingSolver import lpCoupling
-from Components.ComponentMap import compressor, turbine
-from Components.DesignVariables import N_ref_LPC, N_ref_HPC, N_ref_HPT,N_ref_LPT, T_ref, M0_design, gamma_c, gamma_e,\
-R, A8, p_ref, eta_d, T_ref, eta_n, m_5_max
+from Solvers.InternalCouplingSolver import lpCoupling
+from Components.DesignVariables import N_ref_LPC, N_ref_HPC, N_ref_HPT,N_ref_LPT, M0_design
 import warnings
-from matplotlib.pyplot import plot as plt
 from AuxilliaryFunctions.MapPlotFunction import componentPlot
 import numpy as np
-from scipy.optimize import newton
 
 warnings.filterwarnings("ignore")
 
@@ -15,8 +10,8 @@ plot = True
 
 # BETA_LPC DESIGN:
 
-beta_LPC = 0.8
-N_LPC = 0.8
+beta_LPC = 0.7687747928270632
+N_LPC = 0.9949540661360499
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,7 +60,7 @@ print("N*/Nref* (LPT) [-] = " + str(np.round(N_LPT,5)))
 
 print("----------------------------")
 
-T2t_T0 = 1 + (gamma_c-1)/2*M0_design**2
+T2t_T0 = 1 + (1.4-1)/2*M0_design**2
 
 # Assuming T0_Tref = 1:
 

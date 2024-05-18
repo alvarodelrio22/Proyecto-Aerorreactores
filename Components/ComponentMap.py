@@ -5,11 +5,9 @@ from Components.DesignVariables import m_HPC_design, m_LPC_design, m_HPT_design,
 pi_LPC_design, pi_HPC_design, pi_HPT_design, pi_LPT_design
 from scipy.optimize import newton
 
-# Define the components as functions
+## COMPRESSOR: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Compressor: --------------------------------------------------------------------------------------------------------------------------------------------
-
-    # Definition of map interpolation:
+# Definition of map interpolation:
 
 beta_data = [0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1]
 N_data = [0.45,0.5,0.6,0.7,0.8,0.85,0.90,0.92,0.94,0.955,0.98,1,1.04,1.08]
@@ -31,7 +29,7 @@ for name in {"m", "pi", "eta"}:
         generic_mapC[name] = np.double(np.array(data))
         splineC[name] = RectBivariateSpline(beta_data, N_data, np.transpose(generic_mapC[name]), kx = precision, ky = precision)
 
-    # Function definition:       
+# Function definition:       
 
 def compressor(input1,input2,inputname1,inputname2,outputname,type):
 
@@ -199,7 +197,7 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
         print("Unrecognized variable to output")
         exit()
 
-## Turbine--------------------------------------------------------------------------------------------------------------------------------------------------
+## TURBINE: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 # Definition of map interpolation:
 

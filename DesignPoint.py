@@ -5,6 +5,10 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+## DESIGN POINT DETERMINATION: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+# Iterating along component map definition
+
 ## Gas constants - Ambient conditions (Cold and Hot differentiation) ---------------------------------------------------------------------------------------
 
 gamma_c = 1.4;    # [-]
@@ -228,7 +232,6 @@ print("A9  [m^2] = " + str(np.round(A9,5)))
 print("NPR [-] = " + str(np.round(NPR_design,5)))
 
 print(" ")
-
 
 
 
