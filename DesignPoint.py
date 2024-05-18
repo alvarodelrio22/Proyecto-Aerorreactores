@@ -152,6 +152,7 @@ N_ref_LPT = N_ref_LPC/np.sqrt(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t)*N_LP
 
 p5t_p45t = 1/pi_LPT_design
 m_5 = m_45*np.sqrt(T5t_T45t)/p5t_p45t
+m_5_max = m_5
 
 ## LPT Outlet (5t) - Nozzle Outlet (9) ----------------------------------------------------------------------------------------------------------------------
 
@@ -172,7 +173,7 @@ def nozzle_eq(A8, M8):
 def f(A8):
     return np.abs(nozzle_eq(A8, 1) - m_5)
 
-A8 = newton(f, 0.5)
+A8 = newton(f, 0.2)
 
 p9_p0_design = 1
 p9_p5t = p9_p0_design/NPR_design
@@ -183,7 +184,7 @@ A9_A8 = (1+(1-1/eta_n)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(g
 
 A9 = A9_A8*A8
 
-# In case the design parameters want to be printed on screen:
+# Print the design parameters on screen:
 
 print(" ")
 print("DESIGN POINT REPORT")
@@ -193,6 +194,7 @@ print("m* (LPC) [kg/s] = " + str(np.round(m_LPC_design,5)))
 print("m* (HPC) [kg/s] = " + str(np.round(m_HPC_design,5)))
 print("m* (HPT) [kg/s] = " + str(np.round(m_HPT_design,5)))
 print("m* (LPT) [kg/s] = " + str(np.round(m_LPT_design,5)))
+print("m*c (5t) [kg/s] = " + str(np.round(m_5_max,5)))
 
 print("------------------------------------------")
 
@@ -221,8 +223,8 @@ print("ηcc·f·L/(Cp·T3t) [-] = " + str(np.round(fuel_param_design,5)))
 
 print("------------------------------------------")
 
-print("A8 [m^2] = " + str(np.round(A8,5)))
-print("A9 [m^2] = " + str(np.round(A9,5)))
+print("A8  [m^2] = " + str(np.round(A8,5)))
+print("A9  [m^2] = " + str(np.round(A9,5)))
 print("NPR [-] = " + str(np.round(NPR_design,5)))
 
 print(" ")

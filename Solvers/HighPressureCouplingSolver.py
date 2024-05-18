@@ -3,17 +3,29 @@ from Components.DesignVariables import p_ref, T_ref, R, gamma_c, gamma_e, \
 Cp_c, Cp_e, N_ref_HPC, N_ref_HPT, b_25, b_3, eta_mHP, f_assumed, momentum_factor
 import numpy as np
 
+## Function definition: -----------------------------------------------------------------------------------------------------------------------------------
+
 def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
 
-    max_iterations = (1/(1-relaxation_factor))*num_iter0
+    max_iterations = 10*num_iter0
 
     # Bleed values are all refered to the intake air.
 
-## LPC Outlet - HPC Inlet (25t) -----------------------------------------------------------------------------------------------------------------------------
+    if np.isnan(beta_HPC) or np.isnan(N_HPC):
+
+        if representing:
+
+            return np.NaN*np.empty(6) 
+        
+        else:
+
+            return np.NaN*np.empty(16) 
+        
+## LPC Outlet - HPC Inlet (25t) ---------------------------------------------------------------------------------------------------------------------------
     
     m_25 = compressor(beta_HPC,N_HPC,"beta","N","m","HPC")
 
-## HPC Outlet - Combustion Chamber Inlet (3t) ---------------------------------------------------------------------------------------------------------------
+## HPC Outlet - Combustion Chamber Inlet (3t) -------------------------------------------------------------------------------------------------------------
   
     p3t_p25t = compressor(beta_HPC,N_HPC,"beta","N","pi","HPC")
     eta_HPC = compressor(beta_HPC,N_HPC,"beta","N","eta","HPC")
@@ -22,20 +34,19 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
         
         if representing:
 
-            return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+            return np.NaN*np.empty(6) 
         
         else:
 
-            return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
-            np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+            return np.NaN*np.empty(16) 
             
     T3t_T25t = 1 + 1/eta_HPC*(p3t_p25t**((gamma_c-1)/gamma_c)-1)
     m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
   
-## Combustion Chamber Outlet - HPT Inlet (4t) ---------------------------------------------------------------------------------------------------------------
+## Combustion Chamber Outlet - HPT Inlet (4t) -------------------------------------------------------------------------------------------------------------
 
-    T4t_T25t = 3.5       # Start from an initial value 3.5
-    T4t_T25t_max = 7
+    T4t_T25t = 3.5      # Start from an initial value
+    T4t_T25t_max = 5    # Maximum initial guess
 
     error = np.NaN
     iterations = 0
@@ -46,16 +57,15 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
 
         if iterations > max_iterations:
 
-            print("Limit time reached, no convergence: Modify the relaxation factor")
+            print("(HPC) ---> Limit time reached, no convergence: Modify the relaxation factor")
         
             if representing:
 
-                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+                return np.NaN*np.empty(6) 
             
             else:
 
-                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
-                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+                return np.NaN*np.empty(16) 
       
         T4t_T3t = T4t_T25t/T3t_T25t
 
@@ -70,14 +80,14 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
   
         m_4 =  m_3*(1+f_assumed)*np.sqrt(T4t_T3t)/p4t_p3t
 
-## NGV Bleed Injection (41t) -------------------------------------------------------------------------------------------------------------------------------
+## NGV Bleed Injection (41t) -----------------------------------------------------------------------------------------------------------------------------
 
         p41t_p4t = 1
         T41t_T4t = ((1+f_assumed)*(1-b_25-b_3) + b_3*(Cp_c/Cp_e)*(1/T4t_T3t))/((1+f_assumed)*(1-b_25-b_3) + b_3)
    
         m_41 = m_4/((1+f_assumed)*(1-b_25-b_3))*((1+f_assumed)*(1-b_25-b_3)+momentum_factor*b_3)*np.sqrt(T41t_T4t)/p41t_p4t
 
-## HPT Outlet - LPT Inlet (45t) ----------------------------------------------------------------------------------------------------------------------------
+## HPT Outlet - LPT Inlet (45t) --------------------------------------------------------------------------------------------------------------------------
 
         N_HPT = N_HPC*N_ref_HPC/np.sqrt(T41t_T4t*T4t_T25t)/N_ref_HPT
           
@@ -107,13 +117,12 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
         elif np.isnan(error) and iterations > num_iter0:
 
             if representing:
-        
-                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+
+                return np.NaN*np.empty(6) 
             
             else:
 
-                return np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, \
-                np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN, np.NaN
+                return np.NaN*np.empty(16) 
 
     fuel_param = T4t_T3t - 1
     

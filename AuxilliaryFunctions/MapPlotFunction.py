@@ -2,15 +2,11 @@
 import csv, matplotlib as mpl, math as m, numpy as np, warnings
 from matplotlib import pyplot as plt
 
-mpl.rcParams['mathtext.fontset'] = 'custom'
-mpl.rcParams['mathtext.rm'] = 'Cambria'
-mpl.rcParams['mathtext.it'] = 'Cambria: italic'
-mpl.rcParams['mathtext.bf'] = 'Cambria: bold'
-
 from Components.DesignVariables import m_HPC_design, m_LPC_design, m_HPT_design, m_LPT_design, \
 pi_LPC_design, pi_HPC_design, pi_HPT_design, pi_LPT_design
 from scipy.interpolate import RectBivariateSpline
 
+mpl.rcParams['mathtext.fontset'] = 'cm'
 warnings.filterwarnings('ignore')
 
 def componentPlot(type,show):

@@ -2,18 +2,14 @@
 import csv, matplotlib as mpl, math as m, numpy as np, warnings
 from matplotlib import pyplot as plt
 
-mpl.rcParams['mathtext.fontset'] = 'custom'
-mpl.rcParams['mathtext.rm'] = 'Cambria'
-mpl.rcParams['mathtext.it'] = 'Cambria:italic'
-mpl.rcParams['mathtext.bf'] = 'Cambria:bold'
-
 from DesignVariables import m_HPC_design, m_LPC_design, m_HPT_design, m_LPT_design, \
 pi_LPC_design, pi_HPC_design, pi_HPT_design, pi_LPT_design
 from scipy.interpolate import RectBivariateSpline
 
+mpl.rcParams['mathtext.fontset'] = 'cm'
 warnings.filterwarnings('ignore')
 
-type = "HPT"
+type = "HPC"
 
 m_c_ref = 19.7890   #[kg/s]
 pi_c_ref = 6.6631   #[bar]
@@ -49,7 +45,7 @@ elif type == "LPT":
 # not necessarily coincident with the actual cycle design point,
 # referred to as simply "design".
 
-## Map plot
+## Map plot: -----------------------------------------------------------------------------------------------------------------------------------------------
     
 # Choose number of points to plot, beta lines, speed lines,
 # and number of contours
@@ -111,9 +107,9 @@ for i in range(Num_refinement):
 
 if label == "C":
 
-    comp_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.9,100),cmap = 'jet')
-    contour_lines = plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.9,100),vmax = 0.5,
-    cmap = "grey",linestyle=':',linewidths = 0.2)
+    comp_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.9,Num_contour),cmap = 'jet')
+    contour_lines = plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.9,Num_contour),vmax = 0.5,
+    cmap = "grey",linestyle=':',linewidths = 0.1)
 
     for i in range(Num_refinement-1):
 
@@ -124,8 +120,8 @@ if label == "C":
 
 elif label == "T":
 
-    comp_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,1,100),cmap = 'jet')
-    contour_lines = plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,1,100),vmax = 0.5,
+    comp_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,1,Num_contour),cmap = 'jet')
+    contour_lines = plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,1,Num_contour),vmax = 0.5,
     cmap = "grey",linestyle=':',linewidths = 0.1)
 
     for i in range(Num_refinement-1):
