@@ -1,9 +1,8 @@
 import numpy as np, matplotlib.tri as tri
-import warnings, time
+import warnings
 
 from Solvers.InternalCouplingSolver import lpCoupling
-from AuxilliaryFunctions.RelaxationFactor import relaxation_factor
-from AuxilliaryFunctions.MapPlotFunction import componentPlot
+from Miscellaneous.AuxilliaryFunctions import componentPlot, relaxationFactor
 from alive_progress import alive_bar
 
 warnings.filterwarnings("ignore")
@@ -15,8 +14,8 @@ contour = False
 
 # Points to plot: -------------------------------------------------------------------------------------------------------------------------------------------
 
-Num_points_beta = 100
-Num_points_N = 200
+Num_points_beta = 160
+Num_points_N = 625
 
 # Boundaries: -----------------------------------------------------------------------------------------------------------------------------------------------
  
@@ -27,12 +26,12 @@ min_N, max_N = 0.45, 1.08
 
 num_iter0 = 15
 
-relaxation_B_lim = [max_beta, 0.90, 0.85, min_beta]
+relaxation_B_lim = [max_beta, 0.90, 0.60, min_beta]
 relaxation_N_lim = [min_N, 0.70, 0.95, max_N]
 relaxation_matrix = \
-[[0.00,0.75,0.80],
- [0.00,0.65,0.55],
- [0.45,0.00,0.00]]
+[[0.00,0.75,0.80],  \
+[0.00,0.55,0.45],   \
+[0.35,0.00,0.00]]
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -53,7 +52,7 @@ with alive_bar(Num_points_beta*Num_points_N) as bar:
 
             m_2, p25t_p2t, eta_LPC, m_25, p3t_p25t, eta_HPC, m_41, \
             p45t_p41t, eta_HPT, m_45, p5t_p45t, eta_LPT = lpCoupling(beta_LPC[i],N_LPC[j],num_iter0,\
-            relaxation_factor(beta_LPC[i],N_LPC[j],relaxation_B_lim,relaxation_N_lim,relaxation_matrix),True)
+            relaxationFactor(beta_LPC[i],N_LPC[j],relaxation_B_lim,relaxation_N_lim,relaxation_matrix),True)
             
             map["mLPC"][i,j] = m_2
             map["piLPC"][i,j] = p25t_p2t
@@ -126,7 +125,7 @@ if contour:
     triangulation = triangulate("LPC",0.99969,1)
     coupled_mapLPC = pltLPC.tricontourf(triangulation,map["etaLPC"],np.linspace(0.5,0.9,100),cmap='jet')
 else:
-    coupled_mapLPC = pltLPC.scatter(map["mLPC"],map["piLPC"],1,vmin=0.5,vmax=0.9,c=map["etaLPC"],marker="x",cmap="jet")
+    coupled_mapLPC = pltLPC.scatter(map["mLPC"],map["piLPC"],5,vmin=0.5,vmax=0.9,c=map["etaLPC"],marker="x",cmap="jet")
 
 pltLPC.title('LOW PRESSURE COUPLING - LPC',fontsize = 14, weight = 'bold')
 
@@ -144,7 +143,7 @@ if contour:
     triangulation = triangulate("HPC",1,0.0075)
     coupled_mapHPC = pltHPC.tricontourf(triangulation,map["etaHPC"],np.linspace(0.5,0.9,100), cmap='jet')
 else:    
-    coupled_mapHPC = pltHPC.scatter(map["mHPC"],map["piHPC"],1,vmin=0.5,vmax=0.9,c=map["etaHPC"],marker="x",cmap="jet")
+    coupled_mapHPC = pltHPC.scatter(map["mHPC"],map["piHPC"],5,vmin=0.5,vmax=0.9,c=map["etaHPC"],marker="x",cmap="jet")
 
 pltHPC.title('HIGH PRESSURE COUPLING - HPC',fontsize = 14, weight = 'bold')
 
@@ -163,7 +162,7 @@ if contour:
     triangulation = triangulate("HPT",0.8,0.01)
     coupled_mapHPT = pltHPT.tricontourf(triangulation,map["etaHPT"],np.linspace(0.7,0.95,100), cmap='jet')
 else:
-    coupled_mapHPT = pltHPT.scatter(map["mHPT"],map["piHPT"],1,vmin=0.7,vmax=0.95,c=map["etaHPT"],marker="x",cmap="jet")
+    coupled_mapHPT = pltHPT.scatter(map["mHPT"],map["piHPT"],5,vmin=0.7,vmax=0.95,c=map["etaHPT"],marker="x",cmap="jet")
 
 pltHPT.title('HIGH PRESSURE COUPLING - HPT',fontsize = 14, weight = 'bold')
 
@@ -182,7 +181,7 @@ if contour:
     triangulation = triangulate("LPT",1,0.00233)
     coupled_mapLPT = pltLPT.tricontourf(triangulation,map["etaLPT"],np.linspace(0.7,0.95,100), cmap='jet')
 else:
-    coupled_mapLPT = pltLPT.scatter(map["mLPT"],map["piLPT"],1,vmin=0.7,vmax=0.95,c=map["etaLPT"],marker="x",cmap="jet")
+    coupled_mapLPT = pltLPT.scatter(map["mLPT"],map["piLPT"],5,vmin=0.7,vmax=0.95,c=map["etaLPT"],marker="x",cmap="jet")
 
 pltLPT.title('LOW PRESSURE COUPLING - LPT',fontsize = 14, weight = 'bold')
 

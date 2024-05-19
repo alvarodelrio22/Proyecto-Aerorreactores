@@ -9,6 +9,8 @@ from scipy.interpolate import RectBivariateSpline
 mpl.rcParams['mathtext.fontset'] = 'cm'
 warnings.filterwarnings('ignore')
 
+## PLOT COMPONENT MAP (EMPTY/NON-EMPTY) ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 def componentPlot(type,show):
 
     m_c_ref = 19.7890   #[kg/s]
@@ -248,3 +250,23 @@ def componentPlot(type,show):
         [np.ceil(np.max(refined_map["pi"]))*(5.75/8), refined_map["pi"][-1][int(Num_refinement/4)]],color='k',linewidth = 0.75)
 
     return plt
+
+## RELAXATION FACTOR ASSIGNATION ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+#Define an auxilliary function for an adaptative relaxation factor:
+
+def relaxationFactor(beta, N, beta_limits, N_limits, values):
+
+    if np.isnan(beta) or np.isnan(N):
+        return np.NaN
+    elif beta < 0 or beta > 1 or N < 0.45 or N > 1.08:
+        return np.NaN
+
+    for i in range(len(beta_limits)-1):
+
+        for j in range(len(N_limits)-1):
+
+            if beta_limits[i] >= beta >= beta_limits[i+1] and N_limits[j] <= N <= N_limits[j+1]:
+
+                relaxation_factor = values[i][j]
+                return relaxation_factor

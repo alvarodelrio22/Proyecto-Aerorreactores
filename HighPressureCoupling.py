@@ -1,11 +1,11 @@
 import numpy as np, warnings, time
 
 from Solvers.InternalCouplingSolver import hpCoupling
-from AuxilliaryFunctions.RelaxationFactor import relaxation_factor
-from AuxilliaryFunctions.MapPlotFunction import componentPlot
+from Miscellaneous.AuxilliaryFunctions import componentPlot, relaxationFactor
 from alive_progress import alive_bar
 
 warnings.filterwarnings("ignore")
+print(" ")
 
 # Show contour or scatter: ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -13,8 +13,8 @@ contour = True
 
 # Points to plot: -------------------------------------------------------------------------------------------------------------------------------------------
 
-Num_points_beta = 50
-Num_points_N = 50
+Num_points_beta = 100
+Num_points_N = 100
 
 # Boundaries: -----------------------------------------------------------------------------------------------------------------------------------------------
  
@@ -28,9 +28,9 @@ num_iter0 = 100
 relaxation_B_lim = [max_beta, 0.90, 0.75, min_beta]
 relaxation_N_lim = [min_N, 0.75, 0.95, max_N]
 relaxation_matrix = \
-[[0.65,0.75,0.85],
- [0.65,0.75,0.90],  
- [0.70,0.85,0.90]]
+[[0.65,0.75,0.85],  \
+[0.65,0.75,0.90],   \
+[0.70,0.85,0.90]]
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ with alive_bar(Num_points_beta*Num_points_N) as bar:
         for j in range(Num_points_N):
 
             m_25, p3t_p25t, eta_HPC, m_41, p45t_p41t, eta_HPT = hpCoupling(beta_HPC[i],N_HPC[j],num_iter0,\
-            relaxation_factor(beta_HPC[i],N_HPC[j],relaxation_B_lim,relaxation_N_lim,relaxation_matrix),True)
+            relaxationFactor(beta_HPC[i],N_HPC[j],relaxation_B_lim,relaxation_N_lim,relaxation_matrix),True)
 
             map["mHPC"][i,j] = m_25
             map["piHPC"][i,j] = p3t_p25t

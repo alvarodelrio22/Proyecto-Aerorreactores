@@ -1,8 +1,10 @@
 from Solvers.InternalCouplingSolver import lpCoupling
-from Components.DesignVariables import N_ref_LPC, N_ref_HPC, N_ref_HPT,N_ref_LPT, M0_design
-import warnings
-from AuxilliaryFunctions.MapPlotFunction import componentPlot
-import numpy as np
+from Solvers.ExternalCouplingSolver import nonChokedExternalCoupling
+from Components.DesignVariables import N_ref_LPC, N_ref_HPC, N_ref_HPT,N_ref_LPT, M0_design, m_LPC_design
+from Miscellaneous.AuxilliaryFunctions import componentPlot
+from Components.ComponentMap import compressor
+
+import warnings, numpy as np
 
 warnings.filterwarnings("ignore")
 
@@ -10,14 +12,17 @@ plot = True
 
 # BETA_LPC DESIGN:
 
-beta_LPC = 0.7687747928270632
-N_LPC = 0.9949540661360499
+N_LPC = 0.99495406613605
+beta_LPC = 0.7687785715764327
+
+N_LPC = 0.701
+beta_LPC = 0.55
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-m_2, T25t_T2t, p25t_p2t, eta_LPC, N_LPC_, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
+m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
 m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, \
-m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param  = lpCoupling(beta_LPC, N_LPC, 15, 0.15, False)
+m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param  = lpCoupling(beta_LPC, N_LPC, 15, 0.25, False)
 
 # Print the variables on screen:
 
