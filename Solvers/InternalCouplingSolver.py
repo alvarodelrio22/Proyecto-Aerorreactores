@@ -6,8 +6,8 @@ Cp_c, Cp_e, N_ref_LPC, N_ref_HPC, N_ref_HPT, N_ref_LPT, b_25, b_3, eta_mHP, eta_
 import time, numpy as np
 
 ## HIGH PRESSURE COUPLING: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-# Using Succesive Over - Relaxation
+# Iterative method (Succesive Over - Relaxation)
+# Arguments: LPC beta line and LPC Relative Corrected Spool Speed
 
 ## Function definition: ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
         
         else:
 
-            return np.NaN*np.empty(17) 
+            return np.NaN*np.empty(18) 
         
 ## LPC Outlet - HPC Inlet (25t) --------------------------------------------------------------------------------------------------------------------------
     
@@ -42,7 +42,7 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
         
         else:
 
-            return np.NaN*np.empty(17) 
+            return np.NaN*np.empty(18) 
             
     T3t_T25t = 1 + 1/eta_HPC*(p3t_p25t**((gamma_c-1)/gamma_c)-1)
     m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
@@ -57,21 +57,22 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
     iterations = 0
 
     start = time.time()
-    timeOut = 3
+    timeOut = 0.5        # [s]
 
     while np.isnan(error) or error >= tolerance:
 
         if time.time() - start > timeOut:
-
-            print("(HPC) ---> Limit time reached, no convergence: Modify the relaxation factor")
         
             if representing:
+
+                print("(HP) -> Limit time reached, no convergence. Modify function parameters")
+                print(" ")
 
                 return np.NaN*np.empty(6) 
             
             else:
 
-                return np.NaN*np.empty(17) 
+                return np.NaN*np.empty(18) 
       
         T4t_T3t = T4t_T25t/T3t_T25t
 
@@ -129,9 +130,10 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
             
             else:
 
-                return np.NaN*np.empty(17) 
+                return np.NaN*np.empty(18) 
 
-    fuel_param = T4t_T3t - 1
+    load_param = T4t_T3t - 1
+    fuel_param_uncorrected = (1+f_assumed)*Cp_e/Cp_c*(load_param + 1) - 1
     
     if representing:
         
@@ -140,12 +142,13 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
     else:
 
         return m_25, T3t_T25t, p3t_p25t, eta_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
-        m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, fuel_param
+        m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, load_param, fuel_param_uncorrected
 
     
-## LOW PRESSURE COUPLING: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    
-# Using a Newton - Rhapson method with Succesive Over - Relaxation Method
+## LOW PRESSURE COUPLING: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+# Iterative method (Newton - Rhapson with Succesive Over - Relaxation)
+# Arguments: LPC beta line and LPC Relative Corrected Spool Speed
+
 # Relaxation factor map for the HP coupling solver: -------------------------------------------------------------------------------------------------------
 
 num_iter0_HPC = 100
@@ -178,7 +181,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
                 
         else:
 
-            return np.NaN*np.empty(27) 
+            return np.NaN*np.empty(28) 
            
     T25t_T2t = 1 + 1/eta_LPC*(p25t_p2t**((gamma_c-1)/gamma_c) - 1)
     m_HPC = m_2*(1-b_25)*np.sqrt(T25t_T2t)/p25t_p2t
@@ -203,7 +206,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
         else:
 
             m_25, T3t_T25t, p3t_p25t, eta_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
-            m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, fuel_param = hpCoupling(beta_HPC,N_HPC, \
+            m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, load_param, fuel_param_uncorrected = hpCoupling(beta_HPC,N_HPC, \
             num_iter0_HPC,relaxationFactor(beta_HPC,N_HPC,relaxation_B_lim,relaxation_N_lim,relaxation_matrix), False)
             
             N_LPT = (N_LPC*N_ref_LPC)/np.sqrt(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t)/N_ref_LPT
@@ -229,34 +232,34 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
             else:
 
                 return m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
-                m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param  
+                m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, load_param, fuel_param_uncorrected  
     
     # Number of initial guesses is determined by the number of iterations:
     
-    beta_HPC = 0          # Start from an initial value 1
-    dBeta = 1e-7          # Increment for numerical derivative
+    beta_HPC = 0         # Start from an initial value (critical, for external coupling solution recommended: 0)
+    dBeta = 1e-7         # Increment for numerical derivative
 
     error = np.NaN
     tolerance = 1e-5
     iterations = 0
 
     start = time.time()
-    timeOut = 25
+    timeOut = 1.5        # [s]
 
     while np.isnan(error) or error >= tolerance:
 
         if time.time() - start > timeOut:
-
-            print("(LPC) ---> Limit time reached, no convergence: Modify the relaxation factor")
-            print(" ")
-
+            
             if representing:
+
+                print("(LP) -> Limit time reached, no convergence. Modify function parameters")
+                print(" ")
 
                 return np.NaN*np.empty(12) 
             
             else:
 
-                return np.NaN*np.empty(27) 
+                return np.NaN*np.empty(28) 
             
         signed_error = hpLoop(beta_HPC, True)
         error = abs(signed_error)
@@ -274,7 +277,7 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
         
             else:
 
-                return np.NaN*np.empty(27) 
+                return np.NaN*np.empty(28) 
             
         elif ~np.isnan(signed_error) and error > tolerance:
 
@@ -287,8 +290,8 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
             beta_HPC_star = beta_HPC - 1/dtau_dbeta*signed_error
             beta_HPC = beta_HPC_star*(1-relaxation_factor) + beta_HPC*relaxation_factor
 
-    m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
-    m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param = hpLoop(beta_HPC, False)
+    m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, \
+    m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, load_param, fuel_param_uncorrected = hpLoop(beta_HPC, False)
     
     if representing:
 
@@ -299,5 +302,5 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
 
         return m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
         m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, \
-        m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, fuel_param 
+        m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, load_param, fuel_param_uncorrected 
         

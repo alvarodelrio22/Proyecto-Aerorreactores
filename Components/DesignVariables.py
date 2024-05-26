@@ -1,3 +1,4 @@
+from scipy.optimize import newton
 import numpy as np
 
 # Obtained from the calculations in DesignPoint.py
@@ -45,8 +46,6 @@ eta_mLP = 0.98            # [-]
 eta_mHP = 0.99            # [-]
 
 fuel_param_design = 1.56  # [-]
-
-m_5_max = 30.66213        # [kg/s]
 NPR_design = 5.63071      # [-]
 A8 = 0.13277              # [m^2]
 A9 = 0.20344              # [m^2]

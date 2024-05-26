@@ -1,5 +1,4 @@
-import numpy as np, matplotlib.tri as tri
-import warnings
+import numpy as np, matplotlib.tri as tri, warnings
 
 from Solvers.InternalCouplingSolver import lpCoupling
 from Miscellaneous.AuxilliaryFunctions import componentPlot, relaxationFactor
@@ -8,7 +7,7 @@ from alive_progress import alive_bar
 warnings.filterwarnings("ignore")
 print(" ")
 
-# Show contour or scatter -----------------------------------------------------------------------------------------------------------------------------------
+# Show contour or scatter: ----------------------------------------------------------------------------------------------------------------------------------
 
 contour = False
 
@@ -22,7 +21,7 @@ Num_points_N = 625
 min_beta, max_beta = 0, 1
 min_N, max_N = 0.45, 1.08
 
-# Adapt manually the initial guesses and relaxation factor to the area of the map for better efficiency: ---------------------------------------------------
+# Adapt manually the initial guesses and relaxation factor to the area of the map for better efficiency: ----------------------------------------------------
 
 num_iter0 = 15
 
@@ -119,7 +118,7 @@ for x in var:
 
 # LPC -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pltLPC = componentPlot("LPC",False)
+pltLPC = componentPlot("LPC",False,"",0)
 
 if contour:
     triangulation = triangulate("LPC",0.99969,1)
@@ -127,17 +126,15 @@ if contour:
 else:
     coupled_mapLPC = pltLPC.scatter(map["mLPC"],map["piLPC"],5,vmin=0.5,vmax=0.9,c=map["etaLPC"],marker="x",cmap="jet")
 
-pltLPC.title('LOW PRESSURE COUPLING - LPC',fontsize = 14, weight = 'bold')
-
 colbar = pltLPC.colorbar(coupled_mapLPC)
-colbar.set_label(r"$\it η_{\rm LPC}$",fontsize = 14)
+colbar.set_label(r"$\ \it η_{\rm LPC} \ [-]$",rotation=0,fontsize=18,horizontalalignment="left")
 colbar.set_ticks(np.linspace(0.5,0.9,9))
 colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
 pltLPC.show()
 
 # HPC -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pltHPC = componentPlot("HPC",False)
+pltHPC = componentPlot("HPC",False,"",0)
 
 if contour:
     triangulation = triangulate("HPC",1,0.0075)
@@ -145,10 +142,8 @@ if contour:
 else:    
     coupled_mapHPC = pltHPC.scatter(map["mHPC"],map["piHPC"],5,vmin=0.5,vmax=0.9,c=map["etaHPC"],marker="x",cmap="jet")
 
-pltHPC.title('HIGH PRESSURE COUPLING - HPC',fontsize = 14, weight = 'bold')
-
 colbar = pltHPC.colorbar(coupled_mapHPC)
-colbar.set_label(r"$\it η_{\rm HPC}$",fontsize = 14)
+colbar.set_label(r"$\ \it η_{\rm HPC} \ [-]$",rotation=0,fontsize=18,horizontalalignment="left")
 colbar.set_ticks(np.linspace(0.5,0.9,9))
 colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
 
@@ -156,7 +151,7 @@ pltHPC.show()
 
 # HPT -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pltHPT = componentPlot("HPT",False)
+pltHPT = componentPlot("HPT",False,"",0)
 
 if contour:
     triangulation = triangulate("HPT",0.8,0.01)
@@ -164,10 +159,8 @@ if contour:
 else:
     coupled_mapHPT = pltHPT.scatter(map["mHPT"],map["piHPT"],5,vmin=0.7,vmax=0.95,c=map["etaHPT"],marker="x",cmap="jet")
 
-pltHPT.title('HIGH PRESSURE COUPLING - HPT',fontsize = 14, weight = 'bold')
-
 colbar = pltHPT.colorbar(coupled_mapHPT)
-colbar.set_label(r"$\it η_{\rm HPT}$",fontsize = 14)
+colbar.set_label(r"$\ \it η_{\rm HPT} \ [-]$",rotation=0,fontsize=18,horizontalalignment="left")
 colbar.set_ticks(np.linspace(0.7,0.95,6))
 colbar.set_ticklabels(["0.70","0.75","0.80","0.85","0.90","0.95"])
 
@@ -175,7 +168,7 @@ pltHPT.show()
 
 # LPT -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pltLPT = componentPlot("LPT",False)
+pltLPT = componentPlot("LPT",False,"",0)
 
 if contour:
     triangulation = triangulate("LPT",1,0.00233)
@@ -183,10 +176,8 @@ if contour:
 else:
     coupled_mapLPT = pltLPT.scatter(map["mLPT"],map["piLPT"],5,vmin=0.7,vmax=0.95,c=map["etaLPT"],marker="x",cmap="jet")
 
-pltLPT.title('LOW PRESSURE COUPLING - LPT',fontsize = 14, weight = 'bold')
-
 colbar = pltLPT.colorbar(coupled_mapLPT)
-colbar.set_label(r"$\it η_{\rm LPT}$",fontsize = 14)
+colbar.set_label(r"$\ \it η_{\rm LPT} \ [-]$",rotation=0,fontsize=18,horizontalalignment="left")
 colbar.set_ticks(np.linspace(0.7,0.95,6))
 colbar.set_ticklabels(["0.70","0.75","0.80","0.85","0.90","0.95"])
 

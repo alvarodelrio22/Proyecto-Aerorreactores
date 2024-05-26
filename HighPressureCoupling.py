@@ -13,8 +13,8 @@ contour = True
 
 # Points to plot: -------------------------------------------------------------------------------------------------------------------------------------------
 
-Num_points_beta = 100
-Num_points_N = 100
+Num_points_beta = 10
+Num_points_N = 10
 
 # Boundaries: -----------------------------------------------------------------------------------------------------------------------------------------------
  
@@ -64,17 +64,15 @@ with alive_bar(Num_points_beta*Num_points_N) as bar:
 
 # HPC -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pltC = componentPlot("HPC",False)
+pltC = componentPlot("HPC",False,"",0)
 
 if contour:
     coupled_mapC = pltC.contourf(map["mHPC"],map["piHPC"],map["etaHPC"],np.linspace(0.5,0.9,100),cmap = 'jet')
 else:
     coupled_mapC = pltC.scatter(map["mHPC"],map["piHPC"],10,vmin=0.5,vmax=0.9,c=map["etaHPC"],marker="x",cmap="jet")
 
-pltC.title('HIGH PRESSURE COUPLING - HPC',fontsize = 14, weight = 'bold')
-
 colbar = pltC.colorbar(coupled_mapC)
-colbar.set_label(r"$\it η_{\rm HPC}$",fontsize = 14)
+colbar.set_label(r"$ \ \it η_{\rm HPC} \ [-]$",rotation=0,fontsize = 18,horizontalalignment='left')
 colbar.set_ticks(np.linspace(0.5,0.9,9))
 colbar.set_ticklabels(["0.50","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90"])
 
@@ -82,17 +80,15 @@ pltC.show()
 
 # HPT -------------------------------------------------------------------------------------------------------------------------------------------------------
 
-pltT = componentPlot("HPT",False)
+pltT = componentPlot("HPT",False,"",0)
 
 if contour:
     coupled_mapT = pltT.contourf(map["mHPT"],map["piHPT"],map["etaHPT"],np.linspace(0.7,0.95,100),cmap = 'jet')
 else:
     coupled_mapT = pltT.scatter(map["mHPT"],map["piHPT"],10,vmin=0.7,vmax=0.95,c=map["etaHPT"],marker="x",cmap="jet")
 
-pltT.title('HIGH PRESSURE COUPLING - HPT',fontsize = 14, weight = 'bold')
-
 colbar = pltT.colorbar(coupled_mapT)
-colbar.set_label(r"$\it η_{\rm HPT}$",fontsize = 14)
+colbar.set_label(r"$ \ \it η_{\rm HPC} \ [-]$",rotation=0,fontsize = 18,horizontalalignment='left')
 colbar.set_ticks(np.linspace(0.7,0.95,6))
 colbar.set_ticklabels(["0.70","0.75","0.80","0.85","0.90","0.95"])
 

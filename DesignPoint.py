@@ -39,7 +39,7 @@ momentum_factor = 0.5
 eta_mLP = 0.98
 eta_mHP = 0.99
 
-fuel_param_design = 1.56
+load_param_design = 1.56
 
 # Farfield conditions (0) -----------------------------------------------------------------------------------------------------------------------------------
 
@@ -89,7 +89,7 @@ m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
 
 ## Combustion Chamber Outlet - NGV Bleed Injection (4t) -----------------------------------------------------------------------------------------------------
 
-T4t_T3t = 1 + fuel_param_design
+T4t_T3t = 1 + load_param_design
 f_assumed = 0.025
 A3 = 0.9  # [m^2]
 
@@ -170,14 +170,8 @@ eta_n = 0.97
 
 NPR_design = p5t_p45t*p45t_p41t*p41t_p4t*p4t_p3t*p3t_p25t*p25t_p2t*p2t_p0
 
-def nozzle_eq(A8, M8):
-    return A8*(p_ref*1e5)/np.sqrt(R*T_ref)*np.sqrt(gamma_e)*M8*(1+(1-1/eta_n)*(gamma_e-1)/2*M8**2)**(gamma_e/(gamma_e-1))* \
-    (1+(gamma_e-1)/2*M8**2)**(-(gamma_e+1)/(2*(gamma_e-1)))
-
-def f(A8):
-    return np.abs(nozzle_eq(A8, 1) - m_5)
-
-A8 = newton(f, 0.2)
+A8 = m_5/((p_ref*1e5)/np.sqrt(R*T_ref)*np.sqrt(gamma_e)*(1+(1-1/eta_n)*(gamma_e-1)/2)**(gamma_e/(gamma_e-1))* \
+(2/(gamma_e+1))**((gamma_e+1)/(2*(gamma_e-1))))
 
 p9_p0_design = 1
 p9_p5t = p9_p0_design/NPR_design
@@ -198,7 +192,7 @@ print("m* (LPC) [kg/s] = " + str(np.round(m_LPC_design,5)))
 print("m* (HPC) [kg/s] = " + str(np.round(m_HPC_design,5)))
 print("m* (HPT) [kg/s] = " + str(np.round(m_HPT_design,5)))
 print("m* (LPT) [kg/s] = " + str(np.round(m_LPT_design,5)))
-print("m*c (5t) [kg/s] = " + str(np.round(m_5_max,5)))
+print("m* (5t*) [kg/s] = " + str(np.round(m_5_max,5)))
 
 print("------------------------------------------")
 
@@ -223,7 +217,7 @@ print("Nref* (LPT) [rpm] = " + str(np.round(N_ref_LPT,5)))
 
 print("------------------------------------------")
 
-print("ηcc·f·L/(Cp·T3t) [-] = " + str(np.round(fuel_param_design,5)))
+print("T4t/T3t - 1 [-] = " + str(np.round(load_param_design,5)))
 
 print("------------------------------------------")
 
