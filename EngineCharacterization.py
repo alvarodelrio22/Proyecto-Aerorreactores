@@ -177,6 +177,12 @@ shift22 = -0.45
 
 for j in range(Num_Mach):
 
+    if nozzle_type == 'conv-div' and j==4:
+        shift11 = -5.5
+        shift12 = -1
+        shift21 = 0.05
+        shift22 = -1
+
     choke = map["choke"][:,j][~np.isnan(map["choke"][:,j])]
     choke = choke == 1
 
@@ -236,13 +242,32 @@ fig, ax = plt.subplots(1,2, num = 4, figsize = (14,8), edgecolor = 'k')
 plt1 = plt.subplot(1,2,1) 
 plt2 = plt.subplot(1,2,2)   
 
-pos = -1
-halign = 'left'
-valign = 'bottom'
-shift11 = -2
-shift12 = 4
-shift21 = 0.05
-shift22 = -5
+
+if nozzle_type == 'conv-div':
+
+    pos1 = 1
+    pos2 = -1
+    halign1 = 'center'
+    valign1 = 'top'
+    halign2 = 'left'
+    valign2 = 'bottom'
+    shift11 = 0
+    shift12 = -4
+    shift21 = 0
+    shift22 = 1
+
+else:
+
+    pos1 = -1
+    pos2 = -1
+    halign1 = 'left'
+    valign1 = 'bottom'
+    halign2 = 'left'
+    valign2 = 'bottom'
+    shift11 = -2
+    shift12 = 4
+    shift21 = 0.05
+    shift22 = 5
 
 for j in range(Num_Mach):
 
@@ -259,10 +284,10 @@ for j in range(Num_Mach):
     plt2.plot(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][choke],map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])][choke],\
     color="b")
 
-    plt1.text(map["m0"][:,j][~np.isnan(map["m0"][:,j])][pos]+shift11,map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])][pos]+shift12,\
-    str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign,verticalalignment=valign)
-    plt2.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos]+shift21,map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])][pos]+shift22,\
-    str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign,verticalalignment=valign)
+    plt1.text(map["m0"][:,j][~np.isnan(map["m0"][:,j])][pos1]+shift11,map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])][pos1]+shift12,\
+    str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign1,verticalalignment=valign1)
+    plt2.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos2]+shift21,map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])][pos2]+shift22,\
+    str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign2,verticalalignment=valign2)
     
 plt1.set_title(r"$\bf{SPECIFIC \ IMPULSE}$", fontsize = 12)
 plt2.set_title(r"$\bf{SPECIFIC \ IMPULSE}$", fontsize = 12)
@@ -310,6 +335,9 @@ shift11 = 0
 shift12 = -200
 shift21 = 0.05
 shift22 = -50
+
+if nozzle_type == 'conv-div':
+    shift22 = -100
 
 for j in range(Num_Mach):
 
@@ -483,6 +511,10 @@ shift211 = 0
 shift221 = 0.22
 shift222 = -0.1
 
+if nozzle_type == "conv-div":
+    shift121 = 0
+    shift122 = 0.075
+
 for j in range(Num_Mach):
 
     choke = map["choke"][:,j][~np.isnan(map["choke"][:,j])]
@@ -519,13 +551,18 @@ for j in range(Num_Mach):
     plt2.plot(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][choke],map["T4tT0"][:,j][~np.isnan(map["T4tT0"][:,j])][choke],
     color="r")
 
-    plt1.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos11]+shift111,map["p9p0"][:,j][~np.isnan(map["p9p0"][:,j])][pos11]+shift112,\
+    if nozzle_type != "conv-div":
+        plt1.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos11]+shift111,\
+        map["p9p0"][:,j][~np.isnan(map["p9p0"][:,j])][pos11]+shift112,\
     str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign11,verticalalignment=valign11)
-    plt1.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos12]+shift121,map["T9T0"][:,j][~np.isnan(map["T9T0"][:,j])][pos12]+shift122,\
+    plt1.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos12]+shift121,\
+    map["T9T0"][:,j][~np.isnan(map["T9T0"][:,j])][pos12]+shift122,\
     str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign12,verticalalignment=valign12)
-    plt2.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos21]+shift211,map["OPR"][:,j][~np.isnan(map["OPR"][:,j])][pos21]+shift212,\
+    plt2.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos21]+shift211,\
+    map["OPR"][:,j][~np.isnan(map["OPR"][:,j])][pos21]+shift212,\
     str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign2,verticalalignment=valign2)
-    plt2.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos22]+shift221,map["T4tT0"][:,j][~np.isnan(map["T4tT0"][:,j])][pos22]+shift222,\
+    plt2.text(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])][pos22]+shift221,\
+    map["T4tT0"][:,j][~np.isnan(map["T4tT0"][:,j])][pos22]+shift222,\
     str(M0[j]),color='#FF007F',size=10,horizontalalignment=halign2,verticalalignment=valign2)
 
 plt1.set_title(r"$\bf{INLET/OUTLET \ PRESSURE \ AND \ TEMPERATURE \ RATIO}$", fontsize = 12)
@@ -579,16 +616,31 @@ fig, ax = plt.subplots(1,2, num = 8, figsize = (14,8), edgecolor = 'k')
 plt1 = plt.subplot(1,2,1) 
 plt2 = plt.subplot(1,2,2)
 
-pos1 = 1
-pos2 = -1
-halign1 = 'center'
-valign1 = 'top'
-halign2 = 'left'
-valign2 = 'bottom'
-shift11 = 0
-shift12 = -0.005
-shift21 = 0
-shift22 = 0
+if nozzle_type == 'conv-div':
+
+    pos1 = -1
+    pos2 = -1
+    halign1 = 'left'
+    valign1 = 'bottom'
+    halign2 = 'left'
+    valign2 = 'center'
+    shift11 = 0.05
+    shift12 = -0.025
+    shift21 = 0.05
+    shift22 = 0
+
+else:
+
+    pos1 = 1
+    pos2 = -1
+    halign1 = 'center'
+    valign1 = 'top'
+    halign2 = 'left'
+    valign2 = 'bottom'
+    shift11 = 0
+    shift12 = -0.005
+    shift21 = 0
+    shift22 = 0
 
 for j in range(Num_Mach):
 
@@ -662,11 +714,11 @@ elif nozzle_type == "conv-div":
     plt1.set_xlim(1,7)
     plt2.set_xlim(1,7)
 
-    plt1.set_ylim(0.4,1.1)
-    plt2.set_ylim(0.25,2)
+    plt1.set_ylim(0,2.5)
+    plt2.set_ylim(1,2)
 
     plt1.set_xlabel(r"$ \frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
-    plt1.set_ylabel(r"$M_{9} \ [-]$",loc='right',fontsize=16)
+    plt1.set_ylabel(r"$M_{9} \ [-]$",loc='center',fontsize=16)
     
     plt2.set_xlabel(r"$ \frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
     plt2.set_ylabel(r"$\frac{A_{9}}{A_{8}} \ [-]$",loc='center',fontsize=18)
