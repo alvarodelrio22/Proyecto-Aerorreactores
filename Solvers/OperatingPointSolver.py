@@ -15,12 +15,12 @@ import time, numpy as np
 num_iter0 = 15     
 
 relaxation_B_lim = [1, 0]
-relaxation_N_lim = [0.45, 0.75, 1.08]
-relaxation_matrix = [[0.15, 0.00]]
+relaxation_N_lim = [0.45,0.8,1.08]
+relaxation_matrix = [[0.15,0.00]]
 
 ## Function definition: ------------------------------------------------------------------------------------------------------------------------------------
 
-def engCoupling(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
+def engOperation(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
 
     # The intake is calculated according to the Mach Number:
 
@@ -47,7 +47,7 @@ def engCoupling(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
         # The maximum corrected mass flow according to A8 is calculated:
 
         m_5_max = (A8*p_ref*1e5)/np.sqrt(R*T_ref)*np.sqrt(gamma_e)*(1+(1-1/eta_n)*(gamma_e-1)/2)**(gamma_e/(gamma_e-1))* \
-        (2/(gamma_e+1))**((gamma_e+1)/(2*(gamma_e-1)))                       
+        (2/(gamma_e+1))**((gamma_e+1)/(2*(gamma_e-1)))                      
 
         if m_5 <= m_5_max:
 
@@ -178,7 +178,12 @@ def engCoupling(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
                 T9_T5t = 1/(1+(gamma_e-1)/2*M9**2)
                 T9_T0 = T9_T5t*T5t_T45t*T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t*T2t_T0
 
-                A9_A8 = (1+(1-1/eta_n)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(gamma_e+1)* \
+                # An extra nozzle efficiency between 8 and 9 is considered to be quadratic with M9 
+                # due to a gradual apperture of the nozzle petals. Favorable pressure gradient.
+                # No internal shockwaves due to underexpansion.
+
+                eta_n_exit = 1 - 0.01*(M9^2-1)
+                A9_A8 = (1+(1-1/eta_n_exit)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(gamma_e+1)* \
                 (1+(gamma_e-1)/2*M9**2))**((gamma_e+1)/(2*(gamma_e-1)))
 
                 A9 = A8*A9_A8

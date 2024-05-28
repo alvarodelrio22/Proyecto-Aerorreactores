@@ -1,4 +1,4 @@
-from Solvers.FunctioningPointSolver import engCoupling
+from Solvers.OperatingPointSolver import engOperation
 from Miscellaneous.AuxilliaryFunctions import componentPlot
 from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, VPacker
 from alive_progress import alive_bar
@@ -18,7 +18,7 @@ nozzle_type = "conv-div"
 N_min, N_max =  0.45, 1.08
 Mach_min, Mach_max = 0, 1
 
-Num_points = 500
+Num_points = 250
 Num_Mach = 5
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ with alive_bar(Num_points*Num_Mach) as bar:
             m_0, T2t_T0, p2t_p0, eta_d, m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
             m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, \
             eta_LPT, N_LPT, m_5, choked, T9_T5t, p9_p5t, eta_n, M9, A9_A8, p9_p0, T9_T0, E, Isp, TSFC, load_param, fuel_param, N1, N2   = \
-            engCoupling(M0[j], N_LPC[i], nozzle_type, 15, 0.15)
+            engOperation(M0[j], N_LPC[i], nozzle_type, 15, 0.15)
 
             # Distinguish between points in choke or non-choke conditions:
 
@@ -464,9 +464,9 @@ ybox1 = TextArea(r"$\ \ \ \left[\rm \, \frac{rev}{min} \right]$",textprops=dict(
 ybox2 = TextArea(r"$\frac{N_{\rm HP}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",textprops=dict(color='r',size=18,rotation=90,ha='right',va='bottom'))
 ybox3 = TextArea(r"$ \ \ \ \ \ \ , $",textprops=dict(color="k",size=14,rotation=90,ha='left',va='bottom'))
 ybox4 = TextArea(r"$\frac{N_{\rm LP}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",textprops=dict(color='b',size=18,rotation=90,ha='left',va='bottom'))
-ybox = VPacker(children=[ybox1, ybox2, ybox3, ybox4],align="bottom",pad=0,sep=10)
+ybox = VPacker(children=[ybox1, ybox2, ybox3, ybox4],align="bottom",pad=0,sep=5)
 anchored_ybox = AnchoredOffsetbox(loc=8, child=ybox, pad=0, frameon=False, bbox_to_anchor=(-0.15, 0.25),\
-bbox_transform=ax[0].transAxes, borderpad=0)
+bbox_transform = ax[0].transAxes, borderpad=0)
 ax[0].add_artist(anchored_ybox)
 
 plt2.set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)

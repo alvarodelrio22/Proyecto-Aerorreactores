@@ -1,19 +1,20 @@
-from Solvers.FunctioningPointSolver import engCoupling
+from Solvers.OperatingPointSolver import engOperation
 from Miscellaneous.AuxilliaryFunctions import componentPlot
 from Components.DesignVariables import N_ref_HPT, N_ref_LPT
 
 import warnings, numpy as np, matplotlib.pyplot as plt
 warnings.filterwarnings("ignore")
 
-# FUNCTIONING POINT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# OPERATING POINT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+# Arguments: Flight Mach Number and LPC Relative Corrected Spool Speed
 
 plot = True
 
 # Choose entries: ------------------------------------------------------------------------------------------------------------------------------------------
 
-M0 = 0.8
+M0 = 0.80
 N_LPC = 0.9945
-nozzle = 'conv'
+nozzle = 'conv-div'
 
 # Loop parameters: -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -23,12 +24,24 @@ relaxation_factor = 0.15
 m_0, T2t_T0, p2t_p0, eta_d, m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
 m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, \
 eta_LPT, N_LPT, m_5, choked, T9_T5t, p9_p5t, eta_n, M9, A9_A8, p9_p0, T9_T0, E, Isp, TSFC, load_param, fuel_param, N1, N2  = \
-engCoupling(M0, N_LPC, nozzle, num_iter0, relaxation_factor)
+engOperation(M0, N_LPC, nozzle, num_iter0, relaxation_factor)
+
+if np.isnan(m_0):
+    M0 = np.NaN
+    N_LPC = np.NaN
 
 # Print the variables on screen: --------------------------------------------------------------------------------------------------------------------------- 
 
 print(" ")
-print("     COUPLED POINT REPORT    ")
+print("     OPERATING POINT REPORT    ")
+print("-------------------------------")
+print(" ")
+print("Input: ")
+print("-------------------------------")
+print("M0             [-] = " + str(np.round(M0,5)))
+print("N*/Nref* (LPC) [-] = " + str(np.round(N_LPC,5)))
+print(" ")
+print("Output: ")
 print("-------------------------------")
 
 print("m* (0)   [kg/s] = " + str(np.round(m_0,5)))
@@ -81,7 +94,7 @@ print("Choke conditions: " + str(choked))
 
 print("-------------------------------")
 
-print("E*    [kN]      = " + str(np.round(E,5)))
+print("E*    [kN]      = " + str(np.round(E/1000,5)))
 print("Isp*  [kN/kg/s] = " + str(np.round(Isp,5)))
 print("TSFC* [m/s]     = " + str(np.round(TSFC,5)))
 
@@ -94,7 +107,6 @@ print("ηcc·f·L/(Cpc·T0) [-] = " + str(np.round(fuel_param,5)))
 
 print("-------------------------------")
 
-print("N*/Nref* (LPC) [-] = " + str(np.round(N_LPC,5)))
 print("N*/Nref* (HPC) [-] = " + str(np.round(N_HPC,5)))
 print("N*/Nref* (HPT) [-] = " + str(np.round(N_HPT,5)))
 print("N*/Nref* (LPT) [-] = " + str(np.round(N_LPT,5)))
@@ -110,35 +122,55 @@ print(" ")
 
 if plot:
 
-    fig = plt.figure(num=1, figsize=(14,8), edgecolor='k')
+    from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, HPacker
+
+    fig, ax = plt.subplots(1,2,num=1, figsize=(16,8), edgecolor='k')
     plt1 = plt.subplot(1,2,1)
 
     componentPlot("LPC",True,'viridis',0.5)
-    plt1.scatter(m_2,p25t_p2t,100,marker="x",color='r',linewidth=2)
+    plt1.scatter(m_2,p25t_p2t,125,marker="x",color='r',linewidth=2)
     plt1.set_title(r"$\bf{LOW \ PRESSURE \ COMPRESSOR}$", fontsize = 12)
 
     plt2 = plt.subplot(1,2,2)
 
     componentPlot("HPC",True,'viridis',0.5)
-    plt2.scatter(m_25,p3t_p25t,100,marker="x",color='r',linewidth=2)
+    plt2.scatter(m_25,p3t_p25t,125,marker="x",color='r',linewidth=2)
     plt2.set_title(r"$\bf{HIGH \ PRESSURE \ COMPRESSOR}$", fontsize = 12)
 
-    plt.suptitle(r"$\rm{FUNCTIONING \ POINT \ - \ COMPRESSORS}$", fontsize = 14, weight = "bold")
+    ybox1 = TextArea(r"$M_{0} = $",textprops=dict(color='k',size=12,ha='center',va='bottom'))
+    ybox2 = TextArea(str(np.round(M0,2)),textprops=dict(size=10,ha='center',va='bottom'))
+    ybox3 = TextArea(r"$, \ \frac{N_{\rm LP}}{\sqrt{T_{\rm 0}/T_{\rm ref}}} = $",textprops=dict(size=14,ha='center',va='center'))
+    ybox4 = TextArea(str(np.round(N1,1)) + " rpm",textprops=dict(size=10,ha='center',va='bottom'))
+    ybox = HPacker(children=[ybox1, ybox2, ybox3, ybox4],align="center",pad=0,sep=5)
+    anchored_ybox = AnchoredOffsetbox(loc=10, child=ybox, pad=0, frameon=False, bbox_to_anchor=(1.06,1.06),\
+    bbox_transform = ax[0].transAxes, borderpad=0)
+    ax[0].add_artist(anchored_ybox)
+
+    plt.suptitle(r"$\rm{OPERATING \ POINT \ - \ COMPRESSORS}$", fontsize = 14, weight = "bold")
     plt.show()
 
-    fig = plt.figure(num=2, figsize=(14,8), edgecolor='k')
+    fig, ax = plt.subplots(1,2,num=2, figsize=(16,8), edgecolor='k')
     plt3 = plt.subplot(1,2,1)
 
     componentPlot("HPT",True,'viridis',0.5)
-    plt3.scatter(m_41,1/p45t_p41t,100,marker="x",color='r',linewidth=2)
+    plt3.scatter(m_41,1/p45t_p41t,125,marker="x",color='r',linewidth=2)
     plt3.set_title(r"$\bf{HIGH \ PRESSURE \ TURBINE}$", fontsize = 12)
-
+    
     plt4 = plt.subplot(1,2,2)
 
     componentPlot("LPT",True,'viridis',0.5)
-    plt4.scatter(m_45,1/p5t_p45t,100,marker="x",color='r',linewidth=2)
+    plt4.scatter(m_45,1/p5t_p45t,125,marker="x",color='r',linewidth=2)
     plt4.set_title(r"$\bf{LOW \ PRESSURE \ TURBINE}$", fontsize = 12)
 
-    plt.suptitle(r"$\rm{FUNCTIONING \ POINT \ - \ TURBINES}$", fontsize = 14, weight = "bold")
+    ybox1 = TextArea(r"$M_{0} = $",textprops=dict(color='k',size=12,ha='center',va='bottom'))
+    ybox2 = TextArea(str(np.round(M0,2)),textprops=dict(size=10,ha='center',va='bottom'))
+    ybox3 = TextArea(r"$, \ \frac{N_{\rm LP}}{\sqrt{T_{\rm 0}/T_{\rm ref}}} = $",textprops=dict(size=14,ha='center',va='center'))
+    ybox4 = TextArea(str(np.round(N1,1)) + " rpm",textprops=dict(size=10,ha='center',va='bottom'))
+    ybox = HPacker(children=[ybox1, ybox2, ybox3, ybox4],align="center",pad=0,sep=5)
+    anchored_ybox = AnchoredOffsetbox(loc=10, child=ybox, pad=0, frameon=False, bbox_to_anchor=(1.06,1.06),\
+    bbox_transform = ax[0].transAxes, borderpad=0)
+    ax[0].add_artist(anchored_ybox)
+
+    plt.suptitle(r"$\rm{OPERATING \ POINT \ -  \ TURBINES}$", fontsize = 14, weight = "bold")
     plt.show()
 
