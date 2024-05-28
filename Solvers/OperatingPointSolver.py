@@ -182,7 +182,7 @@ def engOperation(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
                 # due to a gradual apperture of the nozzle petals. Favorable pressure gradient.
                 # No internal shockwaves due to underexpansion.
 
-                eta_n_exit = 1 - 0.01*(M9^2-1)
+                eta_n_exit = 1 - 0.01*(M9**2-1)
                 A9_A8 = (1+(1-1/eta_n_exit)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(gamma_e+1)* \
                 (1+(gamma_e-1)/2*M9**2))**((gamma_e+1)/(2*(gamma_e-1)))
 
