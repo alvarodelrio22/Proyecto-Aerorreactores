@@ -1,18 +1,19 @@
-from Solvers.EngineCouplingSolver import engCoupling
+from Solvers.FunctioningPointSolver import engCoupling
 from Miscellaneous.AuxilliaryFunctions import componentPlot
 from Components.DesignVariables import N_ref_HPT, N_ref_LPT
 
-import warnings, numpy as np
+import warnings, numpy as np, matplotlib.pyplot as plt
 warnings.filterwarnings("ignore")
 
 # FUNCTIONING POINT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+plot = True
+
 # Choose entries: ------------------------------------------------------------------------------------------------------------------------------------------
 
-M0 = 0
-N_LPC = 0.9
+M0 = 0.8
+N_LPC = 0.9945
 nozzle = 'conv'
-plot = True
 
 # Loop parameters: -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,19 +110,35 @@ print(" ")
 
 if plot:
 
-    pltLPC = componentPlot("LPC", True, "viridis", 0.5)
-    pltLPC.scatter(m_2,p25t_p2t,200,marker="x",color='r',linewidth=1.25)
-    pltLPC.show()
+    fig = plt.figure(num=1, figsize=(14,8), edgecolor='k')
+    plt1 = plt.subplot(1,2,1)
 
-    pltHPC = componentPlot("HPC", True, "viridis", 0.5)
-    pltHPC.scatter(m_25,p3t_p25t,200,marker="x",color='r',linewidth=1.25)
-    pltHPC.show()
+    componentPlot("LPC",True,'viridis',0.5)
+    plt1.scatter(m_2,p25t_p2t,100,marker="x",color='r',linewidth=2)
+    plt1.set_title(r"$\bf{LOW \ PRESSURE \ COMPRESSOR}$", fontsize = 12)
 
-    pltHPT = componentPlot("HPT", True, "viridis", 0.5)
-    pltHPT.scatter(m_41,1/p45t_p41t,200,marker="x",color='r',linewidth=1.25)
-    pltHPT.show()
+    plt2 = plt.subplot(1,2,2)
 
-    pltLPT = componentPlot("LPT", True, "viridis", 0.5)
-    pltLPT.scatter(m_45,1/p5t_p45t,200,marker="x",color='r',linewidth=1.25)
-    pltLPT.show()
+    componentPlot("HPC",True,'viridis',0.5)
+    plt2.scatter(m_25,p3t_p25t,100,marker="x",color='r',linewidth=2)
+    plt2.set_title(r"$\bf{HIGH \ PRESSURE \ COMPRESSOR}$", fontsize = 12)
+
+    plt.suptitle(r"$\rm{FUNCTIONING \ POINT \ - \ COMPRESSORS}$", fontsize = 14, weight = "bold")
+    plt.show()
+
+    fig = plt.figure(num=2, figsize=(14,8), edgecolor='k')
+    plt3 = plt.subplot(1,2,1)
+
+    componentPlot("HPT",True,'viridis',0.5)
+    plt3.scatter(m_41,1/p45t_p41t,100,marker="x",color='r',linewidth=2)
+    plt3.set_title(r"$\bf{HIGH \ PRESSURE \ TURBINE}$", fontsize = 12)
+
+    plt4 = plt.subplot(1,2,2)
+
+    componentPlot("LPT",True,'viridis',0.5)
+    plt4.scatter(m_45,1/p5t_p45t,100,marker="x",color='r',linewidth=2)
+    plt4.set_title(r"$\bf{LOW \ PRESSURE \ TURBINE}$", fontsize = 12)
+
+    plt.suptitle(r"$\rm{FUNCTIONING \ POINT \ - \ TURBINES}$", fontsize = 14, weight = "bold")
+    plt.show()
 

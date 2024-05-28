@@ -1,4 +1,4 @@
-from Solvers.EngineCouplingSolver import engCoupling
+from Solvers.FunctioningPointSolver import engCoupling
 from Miscellaneous.AuxilliaryFunctions import componentPlot
 from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, VPacker
 from alive_progress import alive_bar
@@ -90,7 +90,7 @@ with alive_bar(Num_points*Num_Mach) as bar:
 fig = plt.figure(num=1, figsize=(14,8), edgecolor='k')
 
 plt1 = plt.subplot(1,2,1)
-pltLPC = componentPlot("LPC",True,'viridis',0.5)
+componentPlot("LPC",True,'viridis',0.5)
 
 for j in range(Num_Mach):
 
@@ -105,7 +105,7 @@ plt1.set_title(r"$\bf{LOW \ PRESSURE \ COMPRESSOR}$", fontsize = 12)
 # HPC -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 plt2 = plt.subplot(1,2,2)
-pltHPC = componentPlot("HPC",True,'viridis',0.5)
+componentPlot("HPC",True,'viridis',0.5)
 
 for j in range(Num_Mach):
 
@@ -125,7 +125,7 @@ plt.show()
 fig = plt.figure(num=2, figsize=(14,8), edgecolor='k')
 
 plt1 = plt.subplot(1,2,1)
-pltHPT = componentPlot("HPT",True,'viridis',0.5)
+componentPlot("HPT",True,'viridis',0.5)
 
 for j in range(Num_Mach):
 
@@ -142,7 +142,7 @@ plt1.set_title(r"$\bf{HIGH \ PRESSURE \ TURBINE}$", fontsize = 12)
 # LPT -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 plt2 = plt.subplot(1,2,2)
-pltLPT = componentPlot("LPT",True,'viridis',0.5)
+componentPlot("LPT",True,'viridis',0.5)
 
 for j in range(Num_Mach):
 

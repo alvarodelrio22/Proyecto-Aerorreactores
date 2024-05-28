@@ -5,7 +5,9 @@ Cp_c, Cp_e, N_ref_LPC, N_ref_HPC, N_ref_HPT, N_ref_LPT, b_25, b_3, eta_mHP, eta_
 
 import time, numpy as np
 
-## HIGH PRESSURE COUPLING: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+## ENGINE INTERNAL COUPLING ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+## HIGH PRESSURE COUPLING SOLVER ---------------------------------------------------------------------------------------------------------------------------
 # Iterative method (Succesive Over - Relaxation)
 # Arguments: LPC beta line and LPC Relative Corrected Spool Speed
 
@@ -145,11 +147,11 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
         m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, load_param, fuel_param_uncorrected
 
     
-## LOW PRESSURE COUPLING: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+## LOW PRESSURE COUPLING SOLVER ----------------------------------------------------------------------------------------------------------------------------
 # Iterative method (Newton - Rhapson with Succesive Over - Relaxation)
 # Arguments: LPC beta line and LPC Relative Corrected Spool Speed
 
-# Relaxation factor map for the HP coupling solver: -------------------------------------------------------------------------------------------------------
+# Relaxation factor map for the HP coupling solver: --------------------------------------------------------------------------------------------------------
 
 num_iter0_HPC = 100
 

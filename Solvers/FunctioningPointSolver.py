@@ -1,12 +1,12 @@
 
-from Solvers.InternalCouplingSolver import lpCoupling
+from Solvers.CouplingSolver import lpCoupling
 from Miscellaneous.AuxilliaryFunctions import relaxationFactor
 from Components.DesignVariables import p_ref, T_ref, gamma_c, gamma_e, Cp_c, Cp_e, f_assumed, b_25, b_3, R, A8, eta_n, eta_d, N_ref_LPC, N_ref_HPC
 from scipy.optimize import newton
 
 import time, numpy as np
 
-## ENGINE COUPLING SOLVER: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+## FUNCTIONING POINT SOLVER: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 # Iterative method (Newton - Rhapson with Succesive Over - Relaxation)
 # Arguments: Flight Mach Number and LPC Relative Corrected Spool Speed
 
@@ -34,7 +34,7 @@ def engCoupling(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
         m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3t_p25t, eta_HPC, N_HPC, \
         m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, \
         m_45, T5t_T45t, p5t_p45t, eta_LPT, N_LPT, m_5, load_param, fuel_param_uncorrected = \
-        lpCoupling(beta_LPC, N_LPC, num_iter0,relaxationFactor(beta_LPC,N_LPC,relaxation_B_lim,relaxation_N_lim,relaxation_matrix), False)
+        lpCoupling(beta_LPC, N_LPC, num_iter0, relaxationFactor(beta_LPC,N_LPC,relaxation_B_lim,relaxation_N_lim,relaxation_matrix), False)
 
         m_0 = m_2/np.sqrt(T2t_T0)*p2t_p0
         fuel_param = T3t_T25t*T25t_T2t*T2t_T0*fuel_param_uncorrected        
