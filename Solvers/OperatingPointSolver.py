@@ -15,7 +15,7 @@ import time, numpy as np
 num_iter0 = 15     
 
 relaxation_B_lim = [1, 0]
-relaxation_N_lim = [0.45,0.8,1.08]
+relaxation_N_lim = [0.45,0.75,1.08]
 relaxation_matrix = [[0.15,0.00]]
 
 ## Function definition: ------------------------------------------------------------------------------------------------------------------------------------
