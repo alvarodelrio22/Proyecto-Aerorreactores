@@ -715,7 +715,7 @@ elif nozzle_type == "conv-div":
     plt2.set_xlim(1,7)
 
     plt1.set_ylim(0,2.5)
-    plt2.set_ylim(1,2)
+    plt2.set_ylim(0.8,2)
 
     plt1.set_xlabel(r"$ \frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
     plt1.set_ylabel(r"$M_{9} \ [-]$",loc='center',fontsize=16)
