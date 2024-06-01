@@ -703,9 +703,9 @@ if nozzle_type == "conv":
 
 elif nozzle_type == "conv-div":
 
-    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='m',size=14,\
+    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='#FF007F',size=14,\
     bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
-    ax[1].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[1].transAxes,color='m',size=14,\
+    ax[1].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[1].transAxes,color='#FF007F',size=14,\
     bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
 
     plt1.set_title(r"$\bf{OUTLET \ MACH \ NUMBER}$", fontsize = 12)
