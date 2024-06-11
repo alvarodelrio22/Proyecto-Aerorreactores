@@ -11,7 +11,7 @@ import numpy as np
 
 # Choose nozzle type ("conv" / "conv-div") -----------------------------------------------------------------------------------------------------------------
 
-nozzle_type = "conv-div"
+nozzle_type = "conv"
 
 # Choose accuracy and Mach numbers to plot -----------------------------------------------------------------------------------------------------------------
 
@@ -696,7 +696,7 @@ if nozzle_type == "conv":
     plt1.grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
     plt1.minorticks_on()
 
-    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='m',size=14,\
+    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='#FF007F',size=14,\
     bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
     ax[1].text(0.5,0.5,"NOT AVAILABLE",transform=ax[1].transAxes,color='k',size=18,\
     bbox=dict(facecolor='w'),verticalalignment='center',horizontalalignment='center')
