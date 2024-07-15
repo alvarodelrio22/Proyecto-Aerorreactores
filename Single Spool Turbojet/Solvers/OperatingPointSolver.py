@@ -8,9 +8,9 @@ import time, numpy as np
 
 ## FUNCTIONING POINT SOLVER: ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 # Iterative method (Newton - Rhapson with Succesive Over - Relaxation)
-# Arguments: Flight Mach Number and LPC Relative Corrected Spool Speed
+# Arguments: Flight Mach Number and Compressor Relative Corrected Spool Speed
 
-# Relaxation factor map for the LP coupling solver: --------------------------------------------------------------------------------------------------------
+# Relaxation factor map for the coupling solver: -----------------------------------------------------------------------------------------------------------
 
 num_iter0 = 100
 
