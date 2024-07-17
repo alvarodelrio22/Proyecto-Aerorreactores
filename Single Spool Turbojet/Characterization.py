@@ -10,6 +10,8 @@ import numpy as np
 # Operating Lines and Characteristic Curves
 
 # Choose nozzle type ("conv" / "conv-div") -----------------------------------------------------------------------------------------------------------------
+# 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 nozzle_type = "conv-div"
 
@@ -18,7 +20,7 @@ nozzle_type = "conv-div"
 N_min, N_max =  0.5, 1.08
 Mach_min, Mach_max = 0, 1
 
-Num_points = 100
+Num_points = 125
 Num_Mach = 5
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -110,7 +112,7 @@ for j in range(Num_Mach):
 
 plt2.set_title(r"$\bf{TURBINE}$", fontsize = 12)
 
-plt.suptitle(r"$\rm{OPERATING \ LINES \ - \ COMPRESSORS}$", fontsize = 14)
+plt.suptitle(r"$\rm{OPERATING \ LINES}$", fontsize = 14)
 plt.show()
 
 ## Characteristic Curves ------------------------------------------------------------------------------------------------------------------------------------
@@ -206,7 +208,7 @@ if nozzle_type == 'conv-div':
     halign2 = 'left'
     valign2 = 'bottom'
     shift11 = 0
-    shift12 = -4
+    shift12 = -6
     shift21 = 0
     shift22 = 1
 
@@ -509,7 +511,7 @@ plt2.set_title(r"$\bf{CYCLE \ OPR \ AND \ MAXIMUM \ TEMPERATURE \ RATIO}$", font
 plt1.set_xlim(1,9)
 plt2.set_xlim(1,9)
 
-plt1.set_ylim(0,6)
+plt1.set_ylim(0,5)
 plt2.set_ylim(0,14)
 
 plt1.set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
