@@ -1,8 +1,10 @@
-import csv, numpy as np
+import csv, numpy as np, warnings
 from scipy.interpolate import RectBivariateSpline
 from Components.DesignVariables import m_HPC_design, m_LPC_design, m_HPT_design, m_LPT_design, \
 pi_LPC_design, pi_HPC_design, pi_HPT_design, pi_LPT_design
 from scipy.optimize import newton
+
+warnings.filterwarnings("ignore")
 
 ## COMPRESSOR: :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -114,14 +116,16 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
                 def f(x):
                     return np.abs(interp2.ev(input2,x) - input1)
             
-            N_values = newton(f,N_refined,tol = 1e-6, maxiter = 100)
+            N_values = newton(f,N_refined,tol = 1e-6)
             N = np.NaN
             tolerance = 1e-5
 
             for k in range(len(N_values)):
 
-                if abs(N_values[k-1]-N_values[k]) < tolerance:
-                    N = N_values[k-1]
+                # Seek a value from above (k -> -k):
+
+                if abs(N_values[-k-1]-N_values[-k]) < tolerance:
+                    N = N_values[-k-1]
                     break
 
             if N < np.min(N_refined) or N > np.max(N_refined) or np.isnan(N):
@@ -167,14 +171,16 @@ def compressor(input1,input2,inputname1,inputname2,outputname,type):
                 def f(x):
                     return np.abs(interp2.ev(x,input2) - input1)
             
-            beta_values = newton(f,beta_refined,tol = 1e-6, maxiter = 100)
+            beta_values = newton(f,beta_refined,tol = 1e-6)
             beta = np.NaN
             tolerance = 1e-5
 
             for k in range(len(beta_values)):
 
-                if abs(beta_values[k-1]-beta_values[k]) < tolerance:
-                    beta = beta_values[k-1]
+                # Seek a value from above (k -> -k):
+
+                if abs(beta_values[-k-1]-beta_values[-k]) < tolerance:
+                    beta = beta_values[-k-1]
                     break
 
             if beta < np.min(beta_refined) or beta > np.max(beta_refined) or np.isnan(beta):
@@ -305,7 +311,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
                 def f(x):
                     return np.abs(interp2.ev(input2,x) - input1)
             
-            N_values = newton(f,N_refined,tol = 1e-6, maxiter = 100)
+            N_values = newton(f,N_refined,tol = 1e-6)
             N = np.NaN
             tolerance = 1e-5
 
@@ -357,7 +363,7 @@ def turbine(input1,input2,inputname1,inputname2,outputname,type):
                 def f(x):
                     return np.abs(interp2.ev(x,input2) - input1)
             
-            beta_values = newton(f,beta_refined,tol = 1e-6, maxiter = 100)
+            beta_values = newton(f,beta_refined,tol = 1e-6)
             beta = np.NaN
             tolerance = 1e-5
 

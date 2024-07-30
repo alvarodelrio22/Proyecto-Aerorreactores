@@ -1,6 +1,7 @@
 from Solvers.OperatingPointSolver import engOperation
 from Miscellaneous.AuxilliaryFunctions import componentPlot
 from Components.DesignVariables import N_ref_HPT, N_ref_LPT
+from Components.ComponentMap import compressor
 
 import warnings, numpy as np, matplotlib.pyplot as plt
 warnings.filterwarnings("ignore")
@@ -13,8 +14,8 @@ plot = True
 # Choose entries: ------------------------------------------------------------------------------------------------------------------------------------------
 
 M0 = 0.80
-N_LPC = 0.9945
-nozzle = 'conv-div'
+N_LPC = 0.7
+nozzle = 'conv'
 
 # Loop parameters: -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -25,6 +26,8 @@ m_0, T2t_T0, p2t_p0, eta_d, m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3
 m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, \
 eta_LPT, N_LPT, m_5, choked, T9_T5t, p9_p5t, eta_n, M9, A9_A8, p9_p0, T9_T0, E, Isp, TSFC, load_param, fuel_param, N1, N2  = \
 engOperation(M0, N_LPC, nozzle, num_iter0, relaxation_factor)
+
+print(compressor(m_2, N_LPC,"m","N","beta","LPC"))     
 
 if np.isnan(m_0):
     M0 = np.NaN
@@ -66,7 +69,7 @@ print("T9/T5t    [-] = " + str(np.round(T9_T5t,5)))
 
 print("-------------------------------")
 
-print("p2t/p0    [-] = " + str(np.round(T2t_T0,5)))
+print("p2t/p0    [-] = " + str(np.round(p2t_p0,5)))
 print("p25t/p2t  [-] = " + str(np.round(p25t_p2t,5)))
 print("p3t/p25t  [-] = " + str(np.round(p3t_p25t,5)))
 print("p4t/p3t   [-] = " + str(np.round(p4t_p3t,5)))

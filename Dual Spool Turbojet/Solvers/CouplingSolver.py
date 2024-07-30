@@ -97,7 +97,7 @@ def hpCoupling(beta_HPC,N_HPC,num_iter0,relaxation_factor,representing):
 
 ## HPT Outlet - LPT Inlet (45t) -----------------------------------------------------------------------------------------------------------------------------
 
-        N_HPT = N_HPC*N_ref_HPC/np.sqrt(T41t_T4t*T4t_T25t)/N_ref_HPT
+        N_HPT = (N_HPC*N_ref_HPC)/np.sqrt(T41t_T4t*T4t_T25t)/N_ref_HPT
           
         p45t_p41t = 1/turbine(m_41,N_HPT,"m","N","pi","HPT")
         eta_HPT = turbine(m_41,N_HPT,"m","N","eta","HPT")
@@ -209,7 +209,9 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
             m_25, T3t_T25t, p3t_p25t, eta_HPC, m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, \
             m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, load_param, fuel_param_uncorrected = hpCoupling(beta_HPC,N_HPC, \
             num_iter0_HPC,relaxationFactor(beta_HPC,N_HPC,relaxation_B_lim,relaxation_N_lim,relaxation_matrix), False)
-            
+
+## LPT Outlet - Nozzle Inlet (5t) ------------------------------------------------------------------------------------------------------------------------
+
             N_LPT = (N_LPC*N_ref_LPC)/np.sqrt(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t)/N_ref_LPT
 
             p5t_p45t = 1/turbine(m_45,N_LPT,"m","N","pi","LPT")
@@ -217,8 +219,6 @@ def lpCoupling(beta_LPC,N_LPC,num_iter0,relaxation_factor,representing):
             T5t_T45t = 1 + eta_LPT*(p5t_p45t**((gamma_e-1)/gamma_e) - 1)
 
             m_5 = m_45*np.sqrt(T5t_T45t)/p5t_p45t
-
-## LPT Outlet - Nozzle Inlet (5t) ------------------------------------------------------------------------------------------------------------------------
 
             if iterate:
 

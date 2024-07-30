@@ -90,12 +90,14 @@ m_3 = m_25/(1-b_25)*(1-b_25-b_3)*np.sqrt(T3t_T25t)/p3t_p25t
 ## Combustion Chamber Outlet - NGV Bleed Injection (4t) -----------------------------------------------------------------------------------------------------
 
 T4t_T3t = 1 + load_param_design
+
 f_assumed = 0.025
 A3 = 0.9  # [m^2]
 
 PLF = 27 + 15*(T4t_T3t - 1)
 p4t_p3t = 1 - PLF/2*(m_3*np.sqrt(R)*np.sqrt(T_ref)/(p_ref*1e5)/A3)**2
-    
+
+fuel_param_design = (T3t_T25t*T25t_T2t*T2t_T0)*(Cp_e/Cp_c*(1+f_assumed)*T4t_T3t - 1)
 m_4 =  m_3*(1+f_assumed)*np.sqrt(T4t_T3t)/p4t_p3t
 
 ## NGV Bleed Injection - HPT Inlet (41t) --------------------------------------------------------------------------------------------------------------------
@@ -221,6 +223,7 @@ print("Nref* (LPT) [rpm] = " + str(np.round(N_ref_LPT,5)))
 print("------------------------------------------")
 
 print("T4t/T3t - 1 [-] = " + str(np.round(load_param_design,5)))
+print("ηcc·f·L/(Cpc·T0) [-] = " + str(np.round(fuel_param_design,5)))
 
 print("------------------------------------------")
 

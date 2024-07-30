@@ -76,7 +76,8 @@ A3 = 0.9  # [m^2]
 
 PLF = 27 + 15*(T4t_T3t - 1)
 p4t_p3t = 1 - PLF/2*(m_3*np.sqrt(R)*np.sqrt(T_ref)/(p_ref*1e5)/A3)**2
-    
+
+fuel_param_design = (T3t_T2t*T2t_T0)*(Cp_e/Cp_c*(1+f_assumed)*T4t_T3t - 1)
 m_4 =  m_3*(1+f_assumed)*np.sqrt(T4t_T3t)/p4t_p3t
 
 ## NGV Bleed Injection - Turbine Inlet (41t) ----------------------------------------------------------------------------------------------------------------
@@ -149,26 +150,27 @@ print("m* (C) [kg/s] = " + str(np.round(m_c_design,5)))
 print("m* (T) [kg/s] = " + str(np.round(m_t_design,5)))
 print("m* (5t*) [kg/s] = " + str(np.round(m_5_max,5)))
 
-print("-----------------------------")
+print("------------------------------")
 
 print("π (C) [-] = " + str(np.round(pi_c_design,5)))
 print("π (T) [-] = " + str(np.round(pi_t_design,5)))
 
-print("-----------------------------")
+print("------------------------------")
 
 print("N*/Nref* (C) [-] = " + str(np.round(N_c_design,5)))
 print("N*/Nref* (T) [-] = " + str(np.round(N_t_design,5)))
 
-print("-----------------------------")
+print("------------------------------")
 
 print("Nref* (C) [rpm] = " + str(np.round(N_ref_c,5)))
 print("Nref* (T) [rpm] = " + str(np.round(N_ref_t,5)))
 
-print("-----------------------------")
+print("------------------------------")
 
 print("T4t/T3t - 1 [-] = " + str(np.round(load_param_design,5)))
+print("ηcc·f·L/(Cpc·T0) [-] = " + str(np.round(fuel_param_design,5)))
 
-print("-----------------------------")
+print("------------------------------")
 
 print("A8  [m^2] = " + str(np.round(A8,5)))
 print("A9  [m^2] = " + str(np.round(A9,5)))

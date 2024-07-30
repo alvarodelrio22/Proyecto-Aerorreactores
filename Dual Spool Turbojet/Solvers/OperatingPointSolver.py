@@ -72,7 +72,7 @@ def engOperation(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
             # The intake is calculated according to the boundary condition:
             
             p2t_p0_est = p9_p0/(p9_p5t*p5t_p45t*p45t_p41t*p41t_p4t*p4t_p3t*p3t_p25t*p25t_p2t)
-            signed_error = p2t_p0_est - p2t_p0
+            signed_error = (p2t_p0_est - p2t_p0)/p2t_p0
 
             if iterate:
                 
@@ -122,7 +122,7 @@ def engOperation(M0, N_LPC, nozzle, num_iter0, relaxation_factor):
 
             # The corrected mass flow in (5t) can not exceed the maximum value imposed by the throat:
 
-            signed_error = m_5 - m_5_max
+            signed_error = (m_5 - m_5_max)/m_5_max
 
             if nozzle == "conv":
 

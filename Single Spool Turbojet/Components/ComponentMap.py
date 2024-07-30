@@ -107,8 +107,10 @@ def compressor(input1,input2,inputname1,inputname2,outputname):
 
             for k in range(len(N_values)):
 
-                if abs(N_values[k-1]-N_values[k]) < tolerance:
-                    N = N_values[k-1]
+                # Seek a value from above (k -> -k):
+
+                if abs(N_values[-k-1]-N_values[-k]) < tolerance:
+                    N = N_values[-k-1]
                     break
 
             if N < np.min(N_refined) or N > np.max(N_refined) or np.isnan(N):
@@ -160,8 +162,10 @@ def compressor(input1,input2,inputname1,inputname2,outputname):
 
             for k in range(len(beta_values)):
 
-                if abs(beta_values[k-1]-beta_values[k]) < tolerance:
-                    beta = beta_values[k-1]
+                # Seek a value from above (k -> -k):
+
+                if abs(beta_values[-k-1]-beta_values[-k]) < tolerance:
+                    beta = beta_values[-k-1]
                     break
 
             if beta < np.min(beta_refined) or beta > np.max(beta_refined) or np.isnan(beta):
