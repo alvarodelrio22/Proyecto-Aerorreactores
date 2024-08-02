@@ -11,8 +11,8 @@ from Components.DesignVariables import fuel_param_design
 
 ## Simulation parameters ------------------------------------------------------------------------------------------------------------------------------------
 
-M0 = 0
-N_LPC = 0.65
+M0 = 0.8
+N_LPC = 0.75
 
 simulation_time = 20  # [s]
 n = 300
@@ -52,7 +52,7 @@ for i in range(n):
         time_fuel_param[i] = fuel_param_design
 
         tolerance[i] = 5e-4
-        relaxation_factor[i] = 0.85
+        relaxation_factor[i] = 0.90
 
 
     elif np.floor(n/2) <= i <= np.floor(11*n/20):
@@ -75,7 +75,7 @@ for i in range(n):
 
         else:
 
-            relaxation_factor[i] = 0.80
+            relaxation_factor[i] = 0.85
 
 ## Run Simulation ------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -13,7 +13,7 @@ import numpy as np
 # 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-nozzle_type = "conv-div"
+nozzle_type = "conv"
 
 # Choose accuracy and Mach numbers to plot -----------------------------------------------------------------------------------------------------------------
 
@@ -407,7 +407,7 @@ plt1.set_ylim(10000,30000)
 plt2.set_ylim(0,120)
 
 plt1.set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
-plt1.set_ylabel(r"$\frac{N_{\rm LP}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",loc='center',fontsize=20)
+plt1.set_ylabel(r"$\frac{N_{\rm}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",loc='center',fontsize=20)
 
 plt2.set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
 plt2.set_ylabel(r"$\frac{\it \dot m_{\rm 0} \sqrt{\!T_{\rm 0}/T_{\rm ref}}}{p_{\rm 0}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",\
