@@ -11,15 +11,15 @@ from Components.DesignVariables import fuel_param_design
 
 ## Simulation parameters ------------------------------------------------------------------------------------------------------------------------------------
 
-M0 = 0.8
-N_LPC = 0.75
+M0 = 1
+N_LPC = 0.7
 
 simulation_time = 20  # [s]
+num_iter0 = 500
 n = 300
-num_iter0 = 150
 
-I1 = 23.43500/15  # [kg·m^2]
-I2 = 12.17470/15  # [kg·m^2]
+I1 = 1.56233  # [kg·m^2]
+I2 = 0.84980  # [kg·m^2]
 
 nozzle = 'conv'
 
@@ -29,6 +29,11 @@ m_0, T2t_T0, p2t_p0, eta_d, m_2, T25t_T2t, p25t_p2t, eta_LPC, m_25, T3t_T25t, p3
 m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T45t_T41t, p45t_p41t, eta_HPT, N_HPT, m_45, T5t_T45t, p5t_p45t, \
 eta_LPT, N_LPT, m_5, choked, T9_T5t, p9_p5t, eta_n, M9, A9_A8, p9_p0, T9_T0, E, Isp, TSFC, load_param, fuel_param_0, N1_0, N2_0  = \
 engOperation(M0,N_LPC,nozzle,15,0.15)
+
+if np.isnan(N1_0) or np.isnan(N2_0):
+    
+    print("Error: Non-existing starting point.")
+    exit()
 
 w_0 = M0, I1, I2, N1_0, N2_0
 
@@ -71,17 +76,20 @@ for i in range(n):
 
         if np.floor(11*n/20) < i <= np.floor(11.25*n/20):
 
-            relaxation_factor[i] = 0.90
+            relaxation_factor[i] = 0.95
 
         else:
 
-            relaxation_factor[i] = 0.85
+            relaxation_factor[i] = 0.95
 
 ## Run Simulation ------------------------------------------------------------------------------------------------------------------------------------------
 
 w, time_N1, time_N2, current_time = transientOperation(w_0, time_fuel_param, 'Euler', simulation_time/n, relaxation_factor, num_iter0, tolerance, 'conv')
 
 ## Shaft Speed Time Response -------------------------------------------------------------------------------------------------------------------------------
+
+choke = w[:,30]
+choke = choke == 1
 
 fig, ax = plt.subplots(1,2, num = 1, figsize = (14,8), edgecolor = 'k')
 
@@ -132,9 +140,6 @@ plt.show()
 # LPC -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 fig = plt.figure(num=1, figsize=(14,8), edgecolor='k')
-
-choke = w[:,30]
-choke = choke == 1
 
 plt1 = plt.subplot(1,2,1)
 componentPlot("LPC",True,'viridis',0.5)
