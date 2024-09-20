@@ -3,6 +3,7 @@ from Solvers.TransientOperationSolver import transientOperation
 from Miscellaneous.AuxilliaryFunctions import componentPlot
 import numpy as np, matplotlib.pyplot as plt
 from Components.DesignVariables import fuel_param_design
+from matplotlib.offsetbox import AnchoredOffsetbox, TextArea, VPacker
 
 ## TRANSIENT CHARACTERIZATION :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Iterative method (Halley Method) + Initial Value Problem Numerical Solver (with choice of propagator)
@@ -10,8 +11,8 @@ from Components.DesignVariables import fuel_param_design
 
 ## Simulation parameters ------------------------------------------------------------------------------------------------------------------------------------
 
-M0 = 0.5
-N_c = 0.7
+M0 = 1
+N_c = 0.65
 
 simulation_time = 30  # [s]
 num_iter0 = 500

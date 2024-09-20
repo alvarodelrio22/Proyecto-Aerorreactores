@@ -98,7 +98,7 @@ def coupling(beta_c,N_c,num_iter0,relaxation_factor,representing):
         N_t = N_c*N_ref_c/np.sqrt(T41t_T4t*T4t_T2t)/N_ref_t
           
         p5t_p41t = 1/turbine(m_41,N_t,"m","N","pi")
-        eta_t = turbine(m_41,N_t,"m","N","eta")*0.9
+        eta_t = turbine(m_41,N_t,"m","N","eta")
    
         T5t_T41t = 1 + eta_t*((p5t_p41t)**((gamma_e-1)/gamma_e) - 1)
         m_5 = m_41/((1+f_assumed)*(1-b_3)+momentum_factor*b_3)*((1+f_assumed)*(1-b_3)+b_3)*np.sqrt(T5t_T41t)/p5t_p41t

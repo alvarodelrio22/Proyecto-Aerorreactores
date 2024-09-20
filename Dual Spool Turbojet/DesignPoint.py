@@ -180,6 +180,7 @@ A8 = m_5/((p_ref*1e5)/np.sqrt(R*T_ref)*np.sqrt(gamma_e)*(1+(1-1/eta_n)*(gamma_e-
 p9_p0_design = 1
 p9_p5t = p9_p0_design/NPR_design
 M9 = np.sqrt(2/(gamma_e-1)*(1/(1-eta_n*(1-(p9_p5t)**((gamma_e-1)/gamma_e)))-1))
+T9_T5t = 1/(1+(gamma_e-1)/2*M9**2)
 
 eta_n_exit = 1 - 0.01*(M9**2-1)
 A9_A8 = (1+(1-1/eta_n_exit)*(gamma_e-1)/2*M9**2)**(-gamma_e/(gamma_e-1))*(1/M9)*(2/(gamma_e+1)* \
@@ -190,46 +191,80 @@ A9 = A9_A8*A8
 # Print the design parameters on screen:
 
 print(" ")
-print("DESIGN POINT REPORT")
+print("     DESIGN POINT REPORT    ")
+print("-------------------------------")
 print(" ")
+print("Input: ")
+print("-------------------------------")
+print("M0             [-] = " + str(np.round(M0,5)))
+print("N*/Nref* (LPC) [-] = " + str(np.round(N_LPC_design,5)))
+print(" ")
+print("Output: ")
+print("-------------------------------")
 
-print("m* (LPC) [kg/s] = " + str(np.round(m_LPC_design,5)))
-print("m* (HPC) [kg/s] = " + str(np.round(m_HPC_design,5)))
-print("m* (HPT) [kg/s] = " + str(np.round(m_HPT_design,5)))
-print("m* (LPT) [kg/s] = " + str(np.round(m_LPT_design,5)))
-print("m* (5t*) [kg/s] = " + str(np.round(m_5_max,5)))
+print("m* (0)   [kg/s] = " + str(np.round(m_0,5)))
+print("m* (2t)  [kg/s] = " + str(np.round(m_2,5)))
+print("m* (25t) [kg/s] = " + str(np.round(m_25,5)))
+print("m* (3t)  [kg/s] = " + str(np.round(m_3,5)))
+print("m* (4t)  [kg/s] = " + str(np.round(m_4,5)))
+print("m* (41t) [kg/s] = " + str(np.round(m_41,5)))
+print("m* (45t) [kg/s] = " + str(np.round(m_45,5)))
+print("m* (5t)  [kg/s] = " + str(np.round(m_5,5)))
 
-print("------------------------------------------")
+print("------------------------------")
 
-print("π (LPC) [-] = " + str(np.round(pi_LPC_design,5)))
-print("π (HPC) [-] = " + str(np.round(pi_HPC_design,5)))
-print("π (HPT) [-] = " + str(np.round(pi_HPT_design,5)))
-print("π (LPT) [-] = " + str(np.round(pi_LPT_design,5)))
+print("T2t/T0    [-] = " + str(np.round(T2t_T0,5)))
+print("T25t/T2t  [-] = " + str(np.round(T25t_T2t,5)))
+print("T3t/T25t  [-] = " + str(np.round(T3t_T25t,5)))
+print("T4t/T3t   [-] = " + str(np.round(T4t_T3t,5)))
+print("T41t/T4t  [-] = " + str(np.round(T41t_T4t,5)))
+print("T45t/T41t [-] = " + str(np.round(T45t_T41t,5)))
+print("T5t/T45t  [-] = " + str(np.round(T5t_T45t,5)))
+print("T9/T5t    [-] = " + str(np.round(T9_T5t,5)))
 
-print("------------------------------------------")
+print("-------------------------------")
+
+print("p2t/p0    [-] = " + str(np.round(p2t_p0,5)))
+print("p25t/p2t  [-] = " + str(np.round(p25t_p2t,5)))
+print("p3t/p25t  [-] = " + str(np.round(p3t_p25t,5)))
+print("p4t/p3t   [-] = " + str(np.round(p4t_p3t,5)))
+print("p41t/p4t  [-] = " + str(np.round(p41t_p4t,5)))
+print("p45t/p41t [-] = " + str(np.round(p45t_p41t,5)))
+print("p5t/p45t  [-] = " + str(np.round(p5t_p45t,5)))
+print("p9/p5t    [-] = " + str(np.round(p9_p5t,5)))
+
+print("-------------------------------")
+
+print("ηd   [-] = " + str(np.round(eta_d,5)))
+print("ηLPC [-] = " + str(np.round(eta_LPC,5)))
+print("ηHPC [-] = " + str(np.round(eta_HPC,5)))
+print("ηHPT [-] = " + str(np.round(eta_HPT,5)))
+print("ηLPT [-] = " + str(np.round(eta_LPT,5)))
+print("ηn   [-] = " + str(np.round(eta_n,5)))
+
+print("-------------------------------")
+
+print("M9    [-] = " + str(np.round(M9,5)))
+print("A9/A8 [-] = " + str(np.round(A9_A8,5)))
+
+print("-------------------------------")
+
+print("p3t/p2t (OPR)    [-] = " + str(np.round(p3t_p25t*p25t_p2t,5)))
+print("T4t/T0  (OTR)    [-] = " + str(np.round(T4t_T3t*T3t_T25t*T25t_T2t*T2t_T0,5)))
+print("T4t/T3t - 1      [-] = " + str(np.round(load_param_design,5)))
+print("ηcc·f·L/(Cpc·T0) [-] = " + str(np.round(fuel_param_design,5)))
+
+print("-------------------------------")
 
 print("N*/Nref* (LPC) [-] = " + str(np.round(N_LPC_design,5)))
 print("N*/Nref* (HPC) [-] = " + str(np.round(N_HPC_design,5)))
 print("N*/Nref* (HPT) [-] = " + str(np.round(N_HPT_design,5)))
 print("N*/Nref* (LPT) [-] = " + str(np.round(N_LPT_design,5)))
 
-print("------------------------------------------")
+print("-------------------------------")
 
-print("Nref* (LPC) [rpm] = " + str(np.round(N_ref_LPC,5)))
-print("Nref* (HPC) [rpm] = " + str(np.round(N_ref_HPC,5)))
-print("Nref* (HPT) [rpm] = " + str(np.round(N_ref_HPT,5)))
-print("Nref* (LPT) [rpm] = " + str(np.round(N_ref_LPT,5)))
-
-print("------------------------------------------")
-
-print("T4t/T3t - 1 [-] = " + str(np.round(load_param_design,5)))
-print("ηcc·f·L/(Cpc·T0) [-] = " + str(np.round(fuel_param_design,5)))
-
-print("------------------------------------------")
-
-print("A8  [m^2] = " + str(np.round(A8,5)))
-print("A9  [m^2] = " + str(np.round(A9,5)))
-print("NPR [-] = " + str(np.round(NPR_design,5)))
+print("NHP* (HPT) [rpm] = " + str(np.round(N_HPT_design*N_ref_HPT*np.sqrt(T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t*T2t_T0),5)))
+print("NLP* (LPT) [rpm] = " + str(np.round(N_LPT_design*N_ref_LPT*np.sqrt(T45t_T41t*T41t_T4t*T4t_T3t*T3t_T25t*T25t_T2t*T2t_T0),5)))
 
 print(" ")
 

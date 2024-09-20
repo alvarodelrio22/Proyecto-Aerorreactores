@@ -116,11 +116,11 @@ def componentPlot(type,show,colmap,alphachannel):
         for i in range(Num_refinement-1):
 
             plt.plot(refined_map["m"][int(pos_N[i])],refined_map["pi"][int(pos_N[i])], color = 'k',linewidth = 0.8,linestyle = '-.')
-            plt.text(refined_map["m"][int(pos_N[i])][1],refined_map["pi"][int(pos_N[i])][1]-0.2,str(np.round(N_refined[int(pos_N[i])],2)),size = 8)
+            #plt.text(refined_map["m"][int(pos_N[i])][1],refined_map["pi"][int(pos_N[i])][1]-0.2,str(np.round(N_refined[int(pos_N[i])],2)),size = 8)
 
-        plt.grid(True,linewidth=0.25,color='k',which="major")
-        plt.grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
-        plt.minorticks_on()
+        #plt.grid(True,linewidth=0.25,color='k',which="major")
+        #plt.grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+        #plt.minorticks_on()
 
     elif label == "T":
 

@@ -129,8 +129,8 @@ if type == "C":
 
 elif type == "T":
 
-    comp_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.50,0.95,Num_contour),cmap = 'jet')
-    contour_lines = plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.50,0.95,Num_contour),vmax = 0.5,
+    comp_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.50,0.85,Num_contour),cmap = 'jet')
+    contour_lines = plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.50,0.85,Num_contour),vmax = 0.5,
     cmap = "grey",linestyle=':',linewidths = 0.1)
 
     for i in range(Num_refinement-1):
@@ -163,8 +163,8 @@ elif type == "T":
 
     colbar = plt.colorbar(comp_map)
     colbar.set_label(r"$\ \it η_{\rm T} \ [-]$",fontsize = 18, rotation=0, horizontalalignment='left')
-    colbar.set_ticks(np.linspace(0.55,0.95,9))
-    colbar.set_ticklabels(["0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.9","0.95"])
+    colbar.set_ticks(np.linspace(0.55,0.85,7))
+    colbar.set_ticklabels(["0.55","0.60","0.65","0.70","0.75","0.80","0.85"])
 
     plt.plot([0.16, refined_map["m"][-1][int(Num_refinement/4)]],
     [2.0, refined_map["pi"][-1][int(Num_refinement/4)]],color='k',linewidth = 0.75)

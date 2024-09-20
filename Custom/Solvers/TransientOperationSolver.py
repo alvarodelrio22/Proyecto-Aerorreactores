@@ -317,20 +317,25 @@ def transientOperation(w_0, time_fuel_param, propagator, delta_t, relaxation_fac
     N = N_0
 
     n = np.size(time_fuel_param)
-    nm = 2                          # Number of measured variables
+    nm = 7                          # Number of measured variables
 
     iteration, beta0 = 0, 0.6
     time_N, current_time = [], []
 
-    w = np.empty([n,32])
+    w = np.empty([n,34])
     dN = 1e-2
 
     P = 0
     Phi_s = 1000
     Rk = np.zeros([nm,nm])
 
-    Rk[0,0] = 2e-4
-    Rk[1,1] = 1e-4
+    Rk[0,0] = 2e-1
+    Rk[1,1] = 2e-1
+    Rk[2,2] = 8e-2
+    Rk[3,3] = 1e-3
+    Rk[4,4] = 2e-1
+    Rk[5,5] = 8e-2
+    Rk[6,6] = 10
 
     file = open("Custom/CSV Files/Validation/Measurements.csv", 'r')
     data = np.double(np.array(list(csv.reader(file))))
@@ -352,8 +357,9 @@ def transientOperation(w_0, time_fuel_param, propagator, delta_t, relaxation_fac
         f_df = (m_0*Cp_c*T2t_T0*T_ref*((Cp_e/Cp_c)*eta_m*((1+f_assumed)*(1-b_3)+momentum_factor*b_3)*(1-T5t_T41t)*\
         T41t_T4t*T4t_T3t*T3t_T2t - (T3t_T2t-1)))/((2*np.pi/60)**2*I*N)
 
-        h_dh = np.array([m_0, p3t_p2t*p2t_p0])
-
+        h_dh = np.array([m_0, T3t_T2t*T2t_T0, p3t_p2t*p2t_p0, p4t_p3t, T5t_T41t*T41t_T4t*T4t_T3t*T3t_T2t*T2t_T0, \
+        p5t_p41t*p41t_p4t*p4t_p3t*p3t_p2t*p2t_p0,E])
+        
         # Change back to the desired speed:
 
         N = N - dN
@@ -368,24 +374,30 @@ def transientOperation(w_0, time_fuel_param, propagator, delta_t, relaxation_fac
         f = (m_0*Cp_c*T2t_T0*T_ref*((Cp_e/Cp_c)*eta_m*((1+f_assumed)*(1-b_3)+momentum_factor*b_3)*(1-T5t_T41t)*\
         T41t_T4t*T4t_T3t*T3t_T2t - (T3t_T2t-1)))/((2*np.pi/60)**2*I*N)
 
-        h = np.array([m_0, p3t_p2t*p2t_p0])
-
-        # Save the solution:
-
-        w[iteration,:] = np.array([m_0, T2t_T0, p2t_p0, m_2, T3t_T2t, p3t_p2t, eta_c, N_c, \
-        m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T5t_T41t, p5t_p41t, eta_t, N_t, m_5, \
-        choked, T9_T5t, p9_p5t, M9, A9_A8, p9_p0, T9_T0, E, Isp, TSFC, fuel_param, N])
+        h = np.array([m_0, T3t_T2t*T2t_T0, p3t_p2t*p2t_p0, p4t_p3t, T5t_T41t*T41t_T4t*T4t_T3t*T3t_T2t*T2t_T0, \
+        p5t_p41t*p41t_p4t*p4t_p3t*p3t_p2t*p2t_p0,E])
 
         # Kalman Filter Parameters:
         
         H = (h_dh - h)/dN     # Measurement Jacobian
         F = (f_df - f)/dN     # State Jacobian 
-        Phi = 1 + F*delta_t   # State Propagation Matrix
+        Phi = 1 + F*delta_t
+        #Phi = 1 + F*delta_t +  F**2*delta_t**2/2  # State Propagation Matrix
 
         Q = Phi_s*((F**2)*delta_t**3/3  + F*delta_t**2 + delta_t)   # Process Noise Covariance Matrix
+        #Q = Phi_s*(delta_t**5/20*F**4 + delta_t**4/4*F**3+2/3*delta_t**3*F**2  + F*delta_t**2 + delta_t)
         M = Phi*P*Phi + Q                                           # Non-updated Filter Covariance Matrix
 
+        print(F)
+
         K = M*np.dot(H,np.linalg.inv(M*np.outer(H,H) + Rk))         # Kalman Gain
+
+        # Save the solution:
+
+        w[iteration,:] = np.array([m_0, T2t_T0, p2t_p0, m_2, T3t_T2t, p3t_p2t, eta_c, N_c, \
+        m_3, T4t_T3t, p4t_p3t, m_4, T41t_T4t, p41t_p4t, m_41, T5t_T41t, p5t_p41t, eta_t, N_t, m_5, \
+        choked, T9_T5t, p9_p5t, M9, A9_A8, p9_p0, T9_T0, E, Isp, TSFC, fuel_param, N, P, np.linalg.norm(K)])
+
         P = (1 - np.dot(K,H))*M                                     # Updated covariance matrix
 
         # Coupling Excess Power:
@@ -402,9 +414,10 @@ def transientOperation(w_0, time_fuel_param, propagator, delta_t, relaxation_fac
 
         # Kalman Filter implementation:
 
-        h = np.array([m_0, p3t_p2t*p2t_p0])
+        h = np.array([m_0, T3t_T2t*T2t_T0, p3t_p2t*p2t_p0, p4t_p3t, T5t_T41t*T41t_T4t*T4t_T3t*T3t_T2t*T2t_T0, \
+        p5t_p41t*p41t_p4t*p4t_p3t*p3t_p2t*p2t_p0,E])
 
-        z = [data[iteration,0],data[iteration,2]]
+        z = [data[iteration,0],data[iteration,1],data[iteration,2],data[iteration,3],data[iteration,4],data[iteration,5],data[iteration,6]]
         N = N_hat + np.dot(K,z - h)
 
         # Update the iteration counter:

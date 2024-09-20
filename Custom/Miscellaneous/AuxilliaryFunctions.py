@@ -144,13 +144,13 @@ def componentPlot(type,show,colmap,alphachannel):
 
         if show:
 
-            turb_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.95,100),\
+            turb_map = plt.contourf(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.85,100),\
             cmap=colmap,linestyle=':',linewidths=1,alpha=alphachannel)
             colbar = plt.colorbar(turb_map,orientation='vertical',location='left',pad =-0.2,shrink=0.7)
 
         else:
 
-            plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.95,100),vmax=0.5,\
+            plt.contour(refined_map["m"],refined_map["pi"],refined_map["eta"],np.linspace(0.5,0.85,100),vmax=0.5,\
             cmap = "grey",linestyle=':',linewidths = 0.1)
 
         for i in range(Num_refinement-1):
@@ -163,7 +163,7 @@ def componentPlot(type,show,colmap,alphachannel):
         plt.grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
         plt.minorticks_on()
 
-        #plt.xlim([0.14,0.32])
+        plt.xlim([0.14,0.32])
         plt.ylim([1,3.5])
 
         xlabel = plt.xlabel(r"$\frac{\it \dot m_{\rm 41} \sqrt{\!T_{\rm 41t}/T_{\rm ref}}}{p_{\rm 41t}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",loc='right')
@@ -178,8 +178,8 @@ def componentPlot(type,show,colmap,alphachannel):
             Nlabel.set_fontsize(18)
 
             colbar.set_label(r"$\eta_{\rm T} \ [-]$",fontsize = 16)
-            colbar.set_ticks(np.linspace(0.5,0.95,10))
-            colbar.set_ticklabels(["0.5","0.55","0.60","0.65","0.70","0.75","0.80","0.85","0.90","0.95"])
+            colbar.set_ticks(np.linspace(0.5,0.85,8))
+            colbar.set_ticklabels(["0.5","0.55","0.60","0.65","0.70","0.75","0.80","0.85"])
 
         else:
 

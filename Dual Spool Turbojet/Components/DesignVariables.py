@@ -48,3 +48,23 @@ fuel_param_design = 4.93635  # [-]
 A8 = 0.13277                 # [m^2]
 A9 = 0.19956                 # [m^2]
 NPR_design = 5.63071         # [-]
+
+# Analytical solution additional parameters:
+
+eta_LPC = 0.87072            # [-]
+eta_HPC = 0.87072            # [-]
+eta_HPT = 0.93245            # [-]
+eta_LPT = 0.93245            # [-]
+
+k_HPT = 13.85085             # [kg/s]
+k_LPT = 22.56845             # [kg/s]
+k_n = 30.66213               # [kg/s]
+
+tau_NGV = 0.96615            # [-]
+tau_HPT = 0.89233            # [-]
+tau_LPT = 0.92722            # [-]
+
+pi_CC = 0.98303              # [-]
+pi_NGV = 1                   # [-]
+pi_HPT = 1/0.59464           # [-]
+pi_LPT = 1/0.70875           # [-]

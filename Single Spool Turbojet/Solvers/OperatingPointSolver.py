@@ -43,7 +43,7 @@ def engOperation(M0, N_c, nozzle, num_iter0, relaxation_factor):
 
         # The fuel parameter and shaft speeds are corrected with exterior conditions:
 
-        N = N_c*N_ref_c*np.sqrt(T2t_T0)                                
+        N = N_c*N_ref_c*np.sqrt(T2t_T0)                              
 
         # The maximum corrected mass flow according to A8 is calculated:
 

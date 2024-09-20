@@ -5,13 +5,16 @@ from alive_progress import alive_bar
 
 from matplotlib import pyplot as plt
 import numpy as np
+from scipy.interpolate import interp1d
+
+from Components.AnalyticalSolution import analyticalSolution
 
 ## ENGINE CHARACTERIZATION :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Operating Lines and Characteristic Curves
 
 # Choose nozzle type ("conv" / "conv-div") -----------------------------------------------------------------------------------------------------------------
 
-nozzle_type = "conv"
+nozzle_type = "conv-div"
 
 # Choose accuracy and Mach numbers to plot -----------------------------------------------------------------------------------------------------------------
 
@@ -81,6 +84,67 @@ with alive_bar(Num_points*Num_Mach) as bar:
             map["choke"][i,j] = choked
             bar()
 
+# Analytical Solution for comparison:
+
+mapa = {}
+vara = ["m0a", "M0a", "mLPCa", "piLPCa", "mLPTa", "piLPTa", \
+"mHPCa", "piHPCa", "T4tT0a", "mHPTa", "piHPTa", "M9a", "OPRa", \
+"A9A8a", "p9p0a", "T9T0a", "E*a", "Isp*a", "TSFC*a", "fuelParameter*a", "chokea"]
+
+Na = 100
+pi_min = 1.2
+pi_max = 3.2
+pia = np.linspace(pi_min,pi_max,Na)
+
+for x in vara:
+    mapa[x] = np.empty([Na,Num_Mach])
+
+for i in range(Na):
+
+    for j in range(Num_Mach):
+
+        T2t_T0a, p2t_p0a, m_0a, T25t_T2ta, p25t_p2ta, m_2a, T3t_T25ta, p3t_p25ta, m_25a, T4t_T3ta, p4t_p3ta, m_3a, T41t_T4ta, p41t_p4ta, m_4a, \
+        T45t_T41ta, p45t_p41ta, m_41a, T5t_T45ta, p5t_p45ta, m_45a, m_5a, chokea, T9_T5ta, p9_p5ta, M9a, A9_A8a, p9_p0a, T9_T0a, Ea, Ispa, TSFCa, fuel_parametera \
+        = analyticalSolution(M0[j], pia[i], nozzle_type)
+
+        mapa["m0a"][i,j] = m_0a
+        mapa["M0a"][i,j] = M0[j]
+
+        mapa["mLPCa"][i,j] = m_2a
+        mapa["piLPCa"][i,j] = p25t_p2ta
+
+        mapa["mHPCa"][i,j] = m_25a
+        mapa["piHPCa"][i,j] = p3t_p25ta
+
+        mapa["T4tT0a"][i,j] = T4t_T3ta*T3t_T25ta*T25t_T2ta*T2t_T0a
+        mapa["OPRa"][i,j] = p3t_p25ta*p25t_p2ta
+
+        mapa["mHPTa"][i,j] = m_41a
+        mapa["piHPTa"][i,j] = 1/p45t_p41ta
+
+        mapa["mLPTa"][i,j] = m_45a
+        mapa["piLPTa"][i,j] = 1/p5t_p45ta
+
+        mapa["p9p0a"][i,j] = p9_p0a
+        mapa["T9T0a"][i,j] = T9_T0a
+        mapa["M9a"][i,j] = M9a
+        mapa["A9A8a"][i,j] = A9_A8a
+
+        # Characteristic curves:
+
+        mapa["E*a"][i,j] = Ea
+        mapa["Isp*a"][i,j] = Ispa
+        mapa["TSFC*a"][i,j] = TSFCa
+
+        mapa["fuelParameter*a"][i,j] = fuel_parametera
+        mapa["chokea"][i,j] = chokea
+
+## Operating Lines ------------------------------------------------------------------------------------------------------------------------------------------
+            
+# Plot Analytical Solution?
+
+Analytical = True
+
 ## Operating Lines ------------------------------------------------------------------------------------------------------------------------------------------
             
 # LPC -------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,6 +159,15 @@ for j in range(Num_Mach):
     choke = map["choke"][:,j][~np.isnan(map["choke"][:,j])]
     choke = choke == 1 
 
+    chokea = mapa["chokea"][:,j] == 1
+
+    if Analytical:
+
+        plt1.plot(mapa["mLPCa"][:,j],mapa["piLPCa"][:,j],color="k",linestyle="--")
+        plt1.plot(mapa["mLPCa"][:,j][chokea],mapa["piLPCa"][:,j][chokea],color="k")
+
+        plt1.legend(["Performance Map Solution","Analytical Solution"])
+
     plt1.plot(map["mLPC"][:,j][~np.isnan(map["mLPC"][:,j])],map["piLPC"][:,j][~np.isnan(map["piLPC"][:,j])],color="r",linestyle="--")
     plt1.plot(map["mLPC"][:,j][~np.isnan(map["mLPC"][:,j])][choke],map["piLPC"][:,j][~np.isnan(map["piLPC"][:,j])][choke],color="r")
 
@@ -108,13 +181,19 @@ componentPlot("HPC",True,'viridis',0.5)
 for j in range(Num_Mach):
 
     choke = map["choke"][:,j][~np.isnan(map["choke"][:,j])]
-    choke = choke == 1  
+    choke = choke == 1
+
+    if Analytical:
+
+        plt2.plot(mapa["mHPCa"][:,j],mapa["piHPCa"][:,j],color="k",linestyle="--")
+        plt2.plot(mapa["mHPCa"][:,j][chokea],mapa["piHPCa"][:,j][chokea],color="k")
+
+        plt2.legend(["Performance Map Solution","Analytical Solution"])
 
     plt2.plot(map["mHPC"][:,j][~np.isnan(map["mHPC"][:,j])],map["piHPC"][:,j][~np.isnan(map["piHPC"][:,j])],color="r",linestyle="--")
     plt2.plot(map["mHPC"][:,j][~np.isnan(map["mHPC"][:,j])][choke],map["piHPC"][:,j][~np.isnan(map["piHPC"][:,j])][choke],color="r")
 
 plt2.set_title(r"$\bf{HIGH \ PRESSURE \ COMPRESSOR}$", fontsize = 12)
-
 plt.suptitle(r"$\rm{OPERATING \ LINES \ - \ COMPRESSORS}$", fontsize = 14)
 plt.show()
 
@@ -129,6 +208,13 @@ for j in range(Num_Mach):
 
     choke = map["choke"][:,j][~np.isnan(map["choke"][:,j])]
     choke = choke == 1  
+
+    if Analytical:
+
+        plt1.plot(mapa["mHPTa"][:,j],mapa["piHPTa"][:,j],color="k",linestyle="--")
+        plt1.plot(mapa["mHPTa"][:,j][chokea],mapa["piHPTa"][:,j][chokea],color="k")
+
+        plt1.legend(["Performance Map Solution","Analytical Solution"])
 
     plt1.plot(map["mHPT"][:,j][~np.isnan(map["mHPT"][:,j])],map["piHPT"][:,j][~np.isnan(map["piHPT"][:,j])],\
     color="r",linestyle="--",linewidth=1.5)
@@ -146,6 +232,13 @@ for j in range(Num_Mach):
 
     choke = map["choke"][:,j][~np.isnan(map["choke"][:,j])]
     choke = choke == 1  
+
+    if Analytical:
+
+        plt2.plot(mapa["mLPTa"][:,j],mapa["piLPTa"][:,j],color="k",linestyle="--")
+        plt2.plot(mapa["mLPTa"][:,j][chokea],mapa["piLPTa"][:,j][chokea],color="k")
+
+        plt2.legend(["Performance Map Solution","Analytical Solution"])
 
     plt2.plot(map["mLPT"][:,j][~np.isnan(map["mLPT"][:,j])],map["piLPT"][:,j][~np.isnan(map["piLPT"][:,j])],\
     color="r",linestyle="--",linewidth=1.5)
@@ -730,6 +823,312 @@ elif nozzle_type == "conv-div":
 
 fig.suptitle(r"$\rm{CYCLE \ PROPERTIES \ - (2)}$", fontsize = 14)
 plt.show()
+
+# Analytical Comparison -------------------------------------------------------------------------------------------------------------------------------------
+# (1) Corrected Thrust - Corrected Mass Flow and Corrected Thrust - Fuel Parameter --------------------------------------------------------------------------
+
+if Analytical:
+
+    fig, ax = plt.subplots(1,2, figsize = (14,8), edgecolor = 'k')
+    plt1 = plt.subplot(1,2,1) 
+    plt2 = plt.subplot(1,2,2)
+
+    ax0_error = ax[0].twinx()
+    ax1_error = ax[1].twinx()
+
+    for j in range(Num_Mach):
+
+        interp_data1, error1 = [], []
+        interp_data2, error2 = [], []
+
+        spline1 = interp1d(map["m0"][:,j][~np.isnan(map["m0"][:,j])],map["E*"][:,j][~np.isnan(map["E*"][:,j])]/1000)
+        spline2 = interp1d(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])],map["E*"][:,j][~np.isnan(map["E*"][:,j])]/1000)
+
+        for i in range(np.size(mapa["m0a"][:,j])):
+
+            if mapa["m0a"][i,j] >= np.min(map["m0"][:,j][~np.isnan(map["m0"][:,j])]) and mapa["m0a"][i,j] <= np.max(map["m0"][:,j][~np.isnan(map["m0"][:,j])]):
+                interp_data1.append(mapa["m0a"][i,j])
+                error1.append(np.abs(spline1(mapa["m0a"][i,j])-(mapa["E*a"][i,j])/1000)/(spline1(mapa["m0a"][i,j]))*100)
+
+        
+        for i in range(np.size(mapa["fuelParameter*a"][:,j])):
+
+            if mapa["fuelParameter*a"][i,j] >= np.min(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]) and \
+            mapa["fuelParameter*a"][i,j] <= np.max(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]):
+                
+                interp_data2.append(mapa["fuelParameter*a"][i,j])
+                error2.append(np.abs(spline2(mapa["fuelParameter*a"][i,j])-(mapa["E*a"][i,j])/1000)/(spline2(mapa["fuelParameter*a"][i,j]))*100)
+
+        chokea = mapa["chokea"][:,j] == 1
+
+        ax[0].plot(mapa["m0a"][:,j],mapa["E*a"][:,j]/1000,color="k",linestyle="--")
+        ax[0].plot(mapa["m0a"][:,j][chokea],mapa["E*a"][:,j][chokea]/1000,color="k")
+        ax0_error.plot(interp_data1,error1,color="r",linewidth = 1)
+
+        ax[1].plot(mapa["fuelParameter*a"][:,j],mapa["E*a"][:,j]/1000,color="k",linestyle="--")
+        ax[1].plot(mapa["fuelParameter*a"][:,j][chokea],mapa["E*a"][:,j][chokea]/1000,color="k")
+        ax1_error.plot(interp_data2,error2,color="r",linewidth = 1)
+        
+    ax[0].set_xlim(0,120)
+    ax[1].set_xlim(1,9)
+
+    ax[0].set_ylim(0,100)
+    ax0_error.set_ylim(0,100)
+    ax[1].set_ylim(0,100)
+    ax1_error.set_ylim(0,200)
+
+    ax[0].set_xlabel(r"$\frac{\it \dot m_{\rm 0} \sqrt{\!T_{\rm 0}/T_{\rm ref}}}{p_{\rm 0}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",\
+    loc='right',fontsize=20)
+    ax[0].set_ylabel(r"$\frac{E}{p_{\rm 0}/p_{\rm ref}} \ \left[\,\rm _{kN}\,\right]$",loc='center',fontsize=20)
+
+    ax[1].set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
+    ax1_error.set_ylabel(r"$\frac{| E^* - E^*_{\rm a} |}{E^*} \ \left[ \% \right]$",loc='center',fontsize=20,color='r')
+
+    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+    ax[1].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[1].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+
+    ax[0].grid(True,linewidth=0.25,color='k',which="major")
+    ax[0].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[0].minorticks_on()
+    ax[1].grid(True,linewidth=0.25,color='k',which="major")
+    ax[1].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[1].minorticks_on()
+
+    ax[0].set_title(r"$\bf{ANALYTICAL \ CORRECTED \ THRUST \ AND \ RELATIVE \ ERROR}$", fontsize = 12)
+    ax[1].set_title(r"$\bf{ANALYTICAL \ CORRECTED \ THRUST \ AND \ RELATIVE \ ERROR}$", fontsize = 12)
+
+    fig.suptitle(r"$\rm{CHARACTERISTIC \ CURVES \ - ANALYTICAL - (1)}$", fontsize = 14)
+    plt.show()
+
+# (2) Corrected Specific Impulse - Corrected Mass Flow and Corrected Specific Impulse - Fuel Parameter ------------------------------------------------------
+
+    fig, ax = plt.subplots(1,2, figsize = (14,8), edgecolor = 'k')
+    plt1 = plt.subplot(1,2,1) 
+    plt2 = plt.subplot(1,2,2)
+
+    ax0_error = ax[0].twinx()
+    ax1_error = ax[1].twinx()
+
+    for j in range(Num_Mach):
+
+        interp_data1, error1 = [], []
+        interp_data2, error2 = [], []
+
+        spline1 = interp1d(map["m0"][:,j][~np.isnan(map["m0"][:,j])],map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])])
+        spline2 = interp1d(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])],map["Isp*"][:,j][~np.isnan(map["Isp*"][:,j])])
+
+        for i in range(np.size(mapa["m0a"][:,j])):
+
+            if mapa["m0a"][i,j] >= np.min(map["m0"][:,j][~np.isnan(map["m0"][:,j])]) and mapa["m0a"][i,j] <= np.max(map["m0"][:,j][~np.isnan(map["m0"][:,j])]):
+                interp_data1.append(mapa["m0a"][i,j])
+                error1.append(np.abs(spline1(mapa["m0a"][i,j])-(mapa["Isp*a"][i,j]))/(spline1(mapa["m0a"][i,j]))*100)
+        
+        for i in range(np.size(mapa["fuelParameter*a"][:,j])):
+
+            if mapa["fuelParameter*a"][i,j] >= np.min(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]) and \
+            mapa["fuelParameter*a"][i,j] <= np.max(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]):
+                
+                interp_data2.append(mapa["fuelParameter*a"][i,j])
+                error2.append(np.abs(spline2(mapa["fuelParameter*a"][i,j])-(mapa["Isp*a"][i,j]))/(spline2(mapa["fuelParameter*a"][i,j]))*100)
+
+        chokea = mapa["chokea"][:,j] == 1
+
+        ax[0].plot(mapa["m0a"][:,j],mapa["Isp*a"][:,j],color="k",linestyle="--")
+        ax[0].plot(mapa["m0a"][:,j][chokea],mapa["Isp*a"][:,j][chokea],color="k")
+        ax0_error.plot(interp_data1,error1,color="r",linewidth = 1)
+
+        ax[1].plot(mapa["fuelParameter*a"][:,j],mapa["Isp*a"][:,j],color="k",linestyle="--")
+        ax[1].plot(mapa["fuelParameter*a"][:,j][chokea],mapa["Isp*a"][:,j][chokea],color="k")
+        ax1_error.plot(interp_data2,error2,color="r",linewidth = 1)
+        
+    ax[0].set_xlim(0,120)
+    ax[1].set_xlim(1,9)
+
+    ax[0].set_ylim(0,1200)
+    ax0_error.set_ylim(0,100)
+    ax[1].set_ylim(0,1200)
+    ax1_error.set_ylim(0,100)
+
+    ax[0].set_xlabel(r"$\frac{\it \dot m_{\rm 0} \sqrt{\!T_{\rm 0}/T_{\rm ref}}}{p_{\rm 0}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",\
+    loc='right',fontsize=20)
+    ax[0].set_ylabel(r"$\frac{I_{\rm sp}}{\sqrt{T_{\rm 0}/T_{\rm ref}}} \ \left[\,\frac{\rm N}{\rm kg \cdot s} \,\right]$",loc='center',fontsize=18)
+
+    ax[1].set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
+    ax1_error.set_ylabel(r"$\frac{| I_{\rm sp}^* - I_{\rm sp,a}^* | }{I_{\rm sp}^*} \ \left[ \% \right]$",loc='center',fontsize=18,color='r')
+
+    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+    ax[1].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[1].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+
+    ax[0].grid(True,linewidth=0.25,color='k',which="major")
+    ax[0].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[0].minorticks_on()
+    ax[1].grid(True,linewidth=0.25,color='k',which="major")
+    ax[1].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[1].minorticks_on()
+
+    ax[0].set_title(r"$\bf{ANALYTICAL \ CORRECTED \ SP. \ IMPULSE \ AND \ RELATIVE \ ERROR}$", fontsize = 12)
+    ax[1].set_title(r"$\bf{ANALYTICAL \ CORRECTED \ SP. \ IMPULSE \ AND \ RELATIVE \ ERROR}$", fontsize = 12)
+
+    fig.suptitle(r"$\rm{CHARACTERISTIC \ CURVES \ - ANALYTICAL - (2)}$", fontsize = 14)
+    plt.show()
+
+# (3) Corrected TSFC - Corrected Mass Flow and Corrected TSFC - Fuel Parameter -----------------------------------------------------------------------------
+
+    fig, ax = plt.subplots(1,2, figsize = (14,8), edgecolor = 'k')
+    plt1 = plt.subplot(1,2,1) 
+    plt2 = plt.subplot(1,2,2)
+
+    ax0_error = ax[0].twinx()
+    ax1_error = ax[1].twinx()
+
+    for j in range(Num_Mach):
+
+        interp_data1, error1 = [], []
+        interp_data2, error2 = [], []
+
+        spline1 = interp1d(map["m0"][:,j][~np.isnan(map["m0"][:,j])],map["TSFC*"][:,j][~np.isnan(map["TSFC*"][:,j])])
+        spline2 = interp1d(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])],map["TSFC*"][:,j][~np.isnan(map["TSFC*"][:,j])])
+
+        for i in range(np.size(mapa["m0a"][:,j])):
+
+            if mapa["m0a"][i,j] >= np.min(map["m0"][:,j][~np.isnan(map["m0"][:,j])]) and mapa["m0a"][i,j] <= np.max(map["m0"][:,j][~np.isnan(map["m0"][:,j])]):
+                interp_data1.append(mapa["m0a"][i,j])
+                error1.append(np.abs(spline1(mapa["m0a"][i,j])-(mapa["TSFC*a"][i,j]))/(spline1(mapa["m0a"][i,j]))*100)
+        
+        for i in range(np.size(mapa["fuelParameter*a"][:,j])):
+
+            if mapa["fuelParameter*a"][i,j] >= np.min(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]) and \
+            mapa["fuelParameter*a"][i,j] <= np.max(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]):
+                
+                interp_data2.append(mapa["fuelParameter*a"][i,j])
+                error2.append(np.abs(spline2(mapa["fuelParameter*a"][i,j])-(mapa["TSFC*a"][i,j]))/(spline2(mapa["fuelParameter*a"][i,j]))*100)
+
+        chokea = mapa["chokea"][:,j] == 1
+
+        ax[0].plot(mapa["m0a"][:,j],mapa["TSFC*a"][:,j],color="k",linestyle="--")
+        ax[0].plot(mapa["m0a"][:,j][chokea],mapa["TSFC*a"][:,j][chokea],color="k")
+        ax0_error.plot(interp_data1,error1,color="r",linewidth = 1)
+
+        ax[1].plot(mapa["fuelParameter*a"][:,j],mapa["TSFC*a"][:,j],color="k",linestyle="--")
+        ax[1].plot(mapa["fuelParameter*a"][:,j][chokea],mapa["TSFC*a"][:,j][chokea],color="k")
+        ax1_error.plot(interp_data2,error2,color="r",linewidth = 1)
+        
+    ax[0].set_xlim(0,120)
+    ax[1].set_xlim(1,9)
+
+    ax[0].set_ylim(1000,5000)
+    ax0_error.set_ylim(0,100)
+    ax[1].set_ylim(1000,5000)
+    ax1_error.set_ylim(0,100)
+
+    ax[0].set_xlabel(r"$\frac{\it \dot m_{\rm 0} \sqrt{\!T_{\rm 0}/T_{\rm ref}}}{p_{\rm 0}/p_{\rm ref}} \ \left[\,\frac{\rm kg}{\rm s}\right]$",\
+    loc='right',fontsize=20)
+    ax[0].set_ylabel(r"$\frac{\eta_{\rm cc}c_{\rm E}L}{\sqrt{T_{\rm 0}/T_{\rm ref}}} \ \left[\,\frac{\rm m}{\rm s} \,\right]$",loc='center',fontsize=18)
+
+    ax[1].set_xlabel(r"$\frac{\eta_{\rm cc}fL}{C_{\rm pc}T_{\rm 0}} \ [-]$",loc='right',fontsize=20)
+    ax1_error.set_ylabel(r"$\frac{|c_{\rm E}^* - c_{\rm E,a}^*|}{c_{\rm E}^*} \ \left[ \% \right]$",loc='center',fontsize=18,color='r')
+
+    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+    ax[1].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[1].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+
+    ax[0].grid(True,linewidth=0.25,color='k',which="major")
+    ax[0].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[0].minorticks_on()
+    ax[1].grid(True,linewidth=0.25,color='k',which="major")
+    ax[1].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[1].minorticks_on()
+
+    ax[0].set_title(r"$\bf{ANALYTICAL \ CORRECTED \ TSFC \ AND \ RELATIVE \ ERROR}$", fontsize = 12)
+    ax[1].set_title(r"$\bf{ANALYTICAL \ CORRECTED \ TSFC \ AND \ RELATIVE \ ERROR}$", fontsize = 12)
+
+    fig.suptitle(r"$\rm{CHARACTERISTIC \ CURVES \ - ANALYTICAL - (2)}$", fontsize = 14)
+    plt.show()
+
+# (4) Exit Mach - Fuel Parameter and Area Law - Fuel Parameter ---------------------------------------------------------------------------------------------
+
+    fig, ax = plt.subplots(1,2, figsize = (14,8), edgecolor = 'k')
+    plt1 = plt.subplot(1,2,1) 
+    plt2 = plt.subplot(1,2,2)
+
+    ax0_error = ax[0].twinx()
+    ax1_error = ax[1].twinx()
+
+    for j in range(Num_Mach):
+
+        interp_data1, error1 = [], []
+        interp_data2, error2 = [], []
+
+        spline1 = interp1d(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])],map["M9"][:,j][~np.isnan(map["M9"][:,j])])
+        spline2 = interp1d(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])],map["A9A8"][:,j][~np.isnan(map["A9A8"][:,j])])
+
+        for i in range(np.size(mapa["fuelParameter*a"][:,j])):
+
+            if mapa["fuelParameter*a"][i,j] >= np.min(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]) and \
+            mapa["fuelParameter*a"][i,j] <= np.max(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]):
+                
+                interp_data1.append(mapa["fuelParameter*a"][i,j])
+                error1.append(np.abs(spline1(mapa["fuelParameter*a"][i,j])-(mapa["M9a"][i,j]))/(spline1(mapa["fuelParameter*a"][i,j]))*100)
+        
+        for i in range(np.size(mapa["fuelParameter*a"][:,j])):
+
+            if mapa["fuelParameter*a"][i,j] >= np.min(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]) and \
+            mapa["fuelParameter*a"][i,j] <= np.max(map["fuelParameter*"][:,j][~np.isnan(map["fuelParameter*"][:,j])]):
+                
+                interp_data2.append(mapa["fuelParameter*a"][i,j])
+                error2.append(np.abs(spline2(mapa["fuelParameter*a"][i,j])-(mapa["A9A8a"][i,j]))/(spline2(mapa["fuelParameter*a"][i,j]))*100)
+
+        chokea = mapa["chokea"][:,j] == 1
+
+        ax[0].plot(mapa["fuelParameter*a"][:,j],mapa["M9a"][:,j],color="k",linestyle="--")
+        ax[0].plot(mapa["fuelParameter*a"][:,j][chokea],mapa["M9a"][:,j][chokea],color="k")
+        ax0_error.plot(interp_data1,error1,color="r",linewidth = 1)
+
+        ax[1].plot(mapa["fuelParameter*a"][:,j],mapa["A9A8a"][:,j],color="k",linestyle="--")
+        ax[1].plot(mapa["fuelParameter*a"][:,j][chokea],mapa["A9A8a"][:,j][chokea],color="k")
+        ax1_error.plot(interp_data2,error2,color="r",linewidth = 1)
+        
+    ax[0].set_xlim(1,9)
+    ax[1].set_xlim(1,9)
+
+    ax[0].set_ylim(0,2.5)
+    ax0_error.set_ylim(0,100)
+    ax[1].set_ylim(0.8,2.2)
+    ax1_error.set_ylim(0,100)
+
+    ax[0].set_xlabel(r"$\frac{\eta_{\rm cc}c_{\rm E}L}{\sqrt{T_{\rm 0}/T_{\rm ref}}} \ \left[\,\frac{\rm m}{\rm s} \,\right]$",\
+    loc='right',fontsize=20)
+    ax[0].set_ylabel(r"$M_{9} \ [-]$",loc='center',fontsize=16)
+    ax0_error.set_ylabel(r"$\frac{|M_{9} - M_{\rm 9,a}|}{M_{9}} \ \left[ \% \right]$",loc='center',fontsize=18,color='r')
+
+    ax[1].set_xlabel(r"$\frac{\eta_{\rm cc}c_{\rm E}L}{\sqrt{T_{\rm 0}/T_{\rm ref}}} \ \left[\,\frac{\rm m}{\rm s} \,\right]$",loc='right',fontsize=20)
+    ax1_error.set_ylabel(r"$\frac{|(A_{9}/A_{8}) - (A_{9}/A_{8})_{\rm a}|}{(A_{9}/A_{8})} \ \left[ \% \right]$",loc='center',fontsize=18,color='r')
+
+    ax[0].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[0].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+    ax[1].text(0.075,0.96,r"$M_{0} \ [-]$",transform=ax[1].transAxes,color='#FF007F',size=14,\
+    bbox=dict(facecolor='w',edgecolor='k',linewidth=0.5),verticalalignment='center',horizontalalignment='center')
+
+    ax[0].grid(True,linewidth=0.25,color='k',which="major")
+    ax[0].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[0].minorticks_on()
+    ax[1].grid(True,linewidth=0.25,color='k',which="major")
+    ax[1].grid(True,linewidth=0.15,linestyle=':',color='k',which="minor")
+    ax[1].minorticks_on()
+
+    ax[0].set_title(r"$\bf{ANALYTICAL \ OUTLET \ MACH \ NUMBER}$", fontsize = 12)
+    ax[1].set_title(r"$\bf{ANALYTICAL \ NOZZLE \ AREA \ RELATION}$", fontsize = 12)
+
+    fig.suptitle(r"$\rm{CHARACTERISTIC \ CURVES \ - ANALYTICAL - (2)}$", fontsize = 14)
+    plt.show()
+
+
+
 
 
 

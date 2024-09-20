@@ -169,7 +169,7 @@ plt2.set_ylim(0,40)
 plt2.legend([r"$\rm{Ref. \ 1}$",r"$\rm{Ref. \ 2}$",r"$\rm{Ref. \ 3}$"], fontsize = 12)
 
 plt2.set_xlabel(r"$\frac{N_{\rm}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",loc='right',fontsize=20)
-plt2.set_ylabel(r"$\frac{E^* - E^*_{\rm m}}{E^*_{\rm m}} \ \left[ \% \right]$",\
+plt2.set_ylabel(r"$\frac{| E^* - E^*_{\rm m} |}{E^*_{\rm m}} \ \left[ \% \right]$",\
 loc='center',fontsize=20)
 
 plt2.grid(True,linewidth=0.25,color='k',which="major")
@@ -232,7 +232,7 @@ plt2.set_xlim(60000,110000)
 plt2.set_ylim(0,20)
 
 plt2.set_xlabel(r"$\frac{N_{\rm}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",loc='right',fontsize=20)
-plt2.set_ylabel(r"$\frac{m^*_0 - m^*_{\rm 0,m}}{m^*_{\rm 0,m}} \ \left[ \% \right]$",\
+plt2.set_ylabel(r"$\frac{| m^*_0 - m^*_{\rm 0,m} |}{m^*_{\rm 0,m}} \ \left[ \% \right]$",\
 loc='center',fontsize=20)
 plt2.legend([r"$\rm{Ref. \ 1}$",r"$\rm{Ref. \ 2}$"], fontsize = 12)
 
@@ -310,7 +310,7 @@ plt2.set_xlim(60000,110000)
 plt2.set_ylim(0,20)
 
 plt2.set_xlabel(r"$\frac{N_{\rm}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",loc='right',fontsize=20)
-plt2.set_ylabel(r"$\frac{\dot{m_{\rm f}} - \dot{m_{\rm f,m}}}{\dot{m_{\rm f,m}}} \ \left[ \% \right]$",\
+plt2.set_ylabel(r"$\frac{| \dot{m_{\rm f}} - \dot{m_{\rm f,m}} |}{\dot{m_{\rm f,m}}} \ \left[ \% \right]$",\
 loc='center',fontsize=20)
 plt2.legend([r"$\rm{Ref. \ 1}$",r"$\rm{Ref. \ 2}$",r"$\rm{Ref. \ 3}$"], fontsize = 12)
 
@@ -375,7 +375,7 @@ plt2.set_xlim(60000,110000)
 plt2.set_ylim(0,20)
 
 plt2.set_xlabel(r"$\frac{N_{\rm}}{\sqrt{T_{\rm 0}/T_{\rm ref}}}$",loc='right',fontsize=20)
-plt2.set_ylabel(r"$\frac{T_{\rm 5t} - T^*_{\rm 5t}}{T^*_{\rm 5t}} \ \left[ \% \right]$",\
+plt2.set_ylabel(r"$\frac{|T_{\rm 5t} - T^*_{\rm 5t}|}{T^*_{\rm 5t}} \ \left[ \% \right]$",\
 loc='center',fontsize=20)
 plt2.legend([r"$\rm{Ref. \ 1}$",r"$\rm{Ref. \ 2}$"], fontsize = 12)
 
